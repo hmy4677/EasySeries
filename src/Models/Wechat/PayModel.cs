@@ -12,11 +12,6 @@ public class PayModel
     public int Amount { get; set; }
 
     /// <summary>
-    /// 商品描述.
-    /// </summary>
-    public string Description { get; set; } = string.Empty;
-
-    /// <summary>
     /// 商户单号.
     /// </summary>
     [Required]
@@ -27,4 +22,9 @@ public class PayModel
     /// </summary>
     [Required]
     public string OpenId { get; set; } = string.Empty;
+
+    /// <summary>
+    /// 商品描述.
+    /// </summary>
+    public string Description { get; set; } = string.Empty;
 }

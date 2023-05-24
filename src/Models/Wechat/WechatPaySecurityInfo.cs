@@ -1,4 +1,4 @@
-﻿using EasySerise.Pay.Models.Ali;
+﻿using EasySeries.Pay.Models;
 using System.ComponentModel.DataAnnotations;
 
 namespace EasySerise.Pay.Models.Wechat;

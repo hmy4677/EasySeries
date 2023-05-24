@@ -14,7 +14,7 @@ namespace EasySerise.Pay.Implement;
 /// </summary>
 public class EasyPayWechat : IEasyPayWechat
 {
-    private readonly WechatPaySecurityInfo _securityInfo;
+    private WechatPaySecurityInfo _securityInfo;
 
     /// <summary>
     /// 初始化.
@@ -28,17 +28,25 @@ public class EasyPayWechat : IEasyPayWechat
     /// <summary>
     /// 生成预付订单.
     /// </summary>
-    /// <returns>预付单号.</returns>
-    public async Task<string> WechatPrepayAsync(PayModel payModel)
+    /// <param name="payModel">支付信息model.</param>
+    /// <param name="securityInfo">支付安全信息(即时模式用).</param>
+    /// <returns>预付订单号.</returns>
+    public async Task<string> WechatPrepayAsync(PayModel payModel, WechatPaySecurityInfo? securityInfo = null)
     {
+        if(securityInfo != null)
+        {
+            _securityInfo = securityInfo;
+        }
+
         const string url = "https://api.mch.weixin.qq.com/v3/pay/transactions/jsapi";
         var requestBody = new PrepayRequest
         {
             appid = _securityInfo.AppId,
             mchid = _securityInfo.MchId,
+            notify_url = _securityInfo.PayNotifyUrl,
+
             amount = new PreOrderAmount { Total = payModel.Amount },
             description = payModel.Description,
-            notify_url = _securityInfo.PayNotifyUrl,
             out_trade_no = payModel.OutTradeNO,
             payer = new PayerInfo { Openid = payModel.OpenId }
         };
@@ -52,10 +60,16 @@ public class EasyPayWechat : IEasyPayWechat
     /// </summary>
     /// <param name="outTradeNo">商户单号(2选1).</param>
     /// <param name="tradeNo">微信支付单号(2选1).</param>
+    /// <param name="securityInfo">支付安全信息(即时模式用).</param>
     /// <returns>支付查询结果.</returns>
     /// <exception cref="Exception">单号为空.</exception>
-    public async Task<PayQueryResponse> WechatQueryPayAsync(string outTradeNo, string tradeNo)
+    public async Task<PayQueryResponse> WechatQueryPayAsync(string outTradeNo, string tradeNo, WechatPaySecurityInfo? securityInfo = null)
     {
+        if(securityInfo != null)
+        {
+            _securityInfo = securityInfo;
+        }
+
         string? type, no;
         if(!string.IsNullOrEmpty(outTradeNo))
         {
@@ -79,10 +93,16 @@ public class EasyPayWechat : IEasyPayWechat
     /// <summary>
     /// 退款.
     /// </summary>
+    /// <param name="securityInfo">支付安全信息(即时模式用).</param>
     /// <param name="refundModel">退款信息.</param>
     /// <returns>结果信息.</returns>
-    public async Task<RefundResponse> WechatRefundAsync(RefundModel refundModel)
+    public async Task<RefundResponse> WechatRefundAsync(RefundModel refundModel, WechatPaySecurityInfo? securityInfo = null)
     {
+        if(securityInfo != null)
+        {
+            _securityInfo = securityInfo;
+        }
+
         const string url = "https://api.mch.weixin.qq.com/v3/refund/domestic/refunds";
         var requstBody = new RefundRequest
         {
@@ -103,9 +123,15 @@ public class EasyPayWechat : IEasyPayWechat
     /// 查询退款.
     /// </summary>
     /// <param name="refundNo">退款单号.</param>
+    /// <param name="securityInfo">支付安全信息(即时模式用).</param>
     /// <returns>查询结果.</returns>
-    public async Task<RefundQueryResponse> WechatQueryRefundAsync(string refundNo)
+    public async Task<RefundQueryResponse> WechatQueryRefundAsync(string refundNo, WechatPaySecurityInfo? securityInfo = null)
     {
+        if(securityInfo != null)
+        {
+            _securityInfo = securityInfo;
+        }
+
         var url = $"https://api.mch.weixin.qq.com/v3/refund/domestic/refunds/{refundNo}";
         return await RestRequestAsync<RefundQueryResponse>(url);
     }
@@ -113,9 +139,15 @@ public class EasyPayWechat : IEasyPayWechat
     /// <summary>
     /// 获取支付平台证书(验签用).
     /// </summary>
+    /// <param name="securityInfo">支付安全信息(即时模式用).</param>
     /// <returns>支付平台证书.</returns>
-    public async Task<List<PlatCert>> WechatGetCertificatesAsync()
+    public async Task<List<PlatCert>> WechatGetCertificatesAsync(WechatPaySecurityInfo? securityInfo = null)
     {
+        if(securityInfo != null)
+        {
+            _securityInfo = securityInfo;
+        }
+
         const string url = "https://api.mch.weixin.qq.com/v3/certificates";
         var result = await RestRequestAsync<PlactCertResponse>(url);
         return result.data.ConvertAll(p => new PlatCert
@@ -131,9 +163,15 @@ public class EasyPayWechat : IEasyPayWechat
     /// 小程序支付签名.
     /// </summary>
     /// <param name="prepayid">预付订单id.</param>
+    /// <param name="securityInfo">支付安全信息(即时模式用).</param>
     /// <returns>小程序支付签名包.</returns>
-    public WeAppSignInfo MiniAppSign(string prepayid)
+    public WeAppSignInfo MiniAppSign(string prepayid, WechatPaySecurityInfo? securityInfo = null)
     {
+        if(securityInfo != null)
+        {
+            _securityInfo = securityInfo;
+        }
+
         var appId = _securityInfo.AppId;
         var timeStamp = (int)DateTimeOffset.UtcNow.ToUnixTimeSeconds();
         var nonceStr = Path.GetRandomFileName();
@@ -153,12 +191,19 @@ public class EasyPayWechat : IEasyPayWechat
 
     /// <summary>
     /// 回调通知处理.
+    /// 回应:return Ok()/BadRequest("'code':'FAIL','message':'验签失败'");
     /// </summary>
     /// <param name="request">回调通知请求.</param>
+    /// <param name="securityInfo">支付安全信息(即时模式用).</param>
     /// <returns>支付查询结果.</returns>
     /// <exception cref="Exception">处理异常.</exception>
-    public async Task<PayQueryResponse> WechatNotifyHandleAsync(HttpRequest request)
+    public async Task<PayQueryResponse> WechatNotifyHandleAsync(HttpRequest request, WechatPaySecurityInfo? securityInfo = null)
     {
+        if(securityInfo != null)
+        {
+            _securityInfo = securityInfo;
+        }
+
         var reader = new StreamReader(request.Body);
         var bodyJson = await reader.ReadToEndAsync();
         if(string.IsNullOrEmpty(bodyJson))
@@ -203,13 +248,15 @@ public class EasyPayWechat : IEasyPayWechat
         var authorization = BuildAuthorization(method, urlTrim, requestBodyJson);
         request.AddHeader("Authorization", authorization);
 
-        var response = await client.ExecuteAsync<T>(request);
-        if(response.Data == null)
+        var response = await client.ExecuteAsync(request);
+        if(response.IsSuccessful)
         {
-            throw new Exception("请求结果为空");
+            return JsonConvert.DeserializeObject<T>(response?.Content ?? "");
         }
-
-        return response.Data;
+        else
+        {
+            throw new Exception($"[{(int)response.StatusCode}]{response.ErrorMessage}");
+        }
     }
 
     /// <summary>
