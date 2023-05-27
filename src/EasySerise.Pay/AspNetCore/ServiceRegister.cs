@@ -1,19 +1,18 @@
-﻿using EasySeries.Pay.Models.Ali;
+﻿using EasySeries.Pay.Options;
 using EasySerise.Pay.Implement;
-using EasySerise.Pay.Models.Wechat;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace EasySerise.Pay.AspNetCore;
 
 public static class ServiceRegister
 {
-    public static IServiceCollection AddEasyPayService(this IServiceCollection services, AliPaySecurityInfo? ali = null, WechatPaySecurityInfo? wechat = null)
+    public static IServiceCollection AddEasyPayService(this IServiceCollection services)
     {
-        ali ??= new AliPaySecurityInfo();
-        wechat ??= new WechatPaySecurityInfo();
+        services.AddOptions<AliPaySecurityOptions>().BindConfiguration(AliPaySecurityOptions.SettingKey);
+        services.AddOptions<WechatPaySecurityOptions>().BindConfiguration(WechatPaySecurityOptions.SettingKey);
 
-        services.AddScoped<IEasyPayAli, EasyPayAli>(p => new EasyPayAli(ali));
-        services.AddScoped<IEasyPayWechat, EasyPayWechat>(p => new EasyPayWechat(wechat));
+        services.AddScoped<IEasyPayAli, EasyPayAli>();
+        services.AddScoped<IEasyPayWechat, EasyPayWechat>();
 
         return services;
     }

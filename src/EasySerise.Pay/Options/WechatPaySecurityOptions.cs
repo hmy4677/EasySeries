@@ -1,13 +1,12 @@
-﻿using EasySeries.Pay.Models;
-using System.ComponentModel.DataAnnotations;
-
-namespace EasySerise.Pay.Models.Wechat;
+﻿namespace EasySeries.Pay.Options;
 
 /// <summary>
 /// 微信支付安全信息.
 /// </summary>
-public class WechatPaySecurityInfo : PaySecurityInfo
+public class WechatPaySecurityOptions : PaySecurityOptions
 {
+    public static readonly string SettingKey = "WechatPaySecurityOptions";
+
     /// <summary>
     /// 微信商户号id.
     /// </summary>

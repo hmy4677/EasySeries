@@ -1,9 +1,9 @@
-﻿namespace EasySeries.Pay.Models;
+﻿namespace EasySeries.Pay.Options;
 
 /// <summary>
 /// 支付安全信息.
 /// </summary>
-public class PaySecurityInfo
+public class PaySecurityOptions
 {
     /// <summary>
     /// 私钥文件路径.

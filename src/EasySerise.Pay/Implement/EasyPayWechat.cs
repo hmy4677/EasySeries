@@ -1,4 +1,5 @@
-﻿using EasySerise.Pay.Models.Wechat;
+﻿using EasySeries.Pay.Options;
+using EasySerise.Pay.Models.Wechat;
 using Org.BouncyCastle.Crypto.Engines;
 using Org.BouncyCastle.Crypto.Modes;
 using Org.BouncyCastle.Crypto.Parameters;
@@ -14,36 +15,36 @@ namespace EasySerise.Pay.Implement;
 /// </summary>
 public class EasyPayWechat : IEasyPayWechat
 {
-    private WechatPaySecurityInfo _securityInfo;
+    private WechatPaySecurityOptions _securityOptions;
 
     /// <summary>
     /// 初始化.
     /// </summary>
-    /// <param name="securityInfo">支付安全信息.</param>
-    public EasyPayWechat(WechatPaySecurityInfo securityInfo)
+    /// <param name="securityOptions">支付安全.</param>
+    public EasyPayWechat(IOptions<WechatPaySecurityOptions> securityOptions)
     {
-        _securityInfo = securityInfo;
+        _securityOptions = securityOptions.Value;
     }
 
     /// <summary>
     /// 生成预付订单.
     /// </summary>
     /// <param name="payModel">支付信息model.</param>
-    /// <param name="securityInfo">支付安全信息(即时模式用).</param>
+    /// <param name="securityOptions">支付安全(即时模式用).</param>
     /// <returns>预付订单号.</returns>
-    public async Task<string> WechatPrepayAsync(PayModel payModel, WechatPaySecurityInfo? securityInfo = null)
+    public async Task<string> WechatPrepayAsync(PayModel payModel, WechatPaySecurityOptions? securityOptions = null)
     {
-        if(securityInfo != null)
+        if(securityOptions != null)
         {
-            _securityInfo = securityInfo;
+            _securityOptions = securityOptions;
         }
 
-        const string url = "https://api.mch.weixin.qq.com/v3/pay/transactions/jsapi";
+        const string API_URL = "https://api.mch.weixin.qq.com/v3/pay/transactions/jsapi";
         var requestBody = new PrepayRequest
         {
-            appid = _securityInfo.AppId,
-            mchid = _securityInfo.MchId,
-            notify_url = _securityInfo.PayNotifyUrl,
+            appid = _securityOptions.AppId,
+            mchid = _securityOptions.MchId,
+            notify_url = _securityOptions.PayNotifyUrl,
 
             amount = new PreOrderAmount { Total = payModel.Amount },
             description = payModel.Description,
@@ -51,7 +52,7 @@ public class EasyPayWechat : IEasyPayWechat
             payer = new PayerInfo { Openid = payModel.OpenId }
         };
         var requestBodyJson = JsonConvert.SerializeObject(requestBody);
-        var result = await RestRequestAsync<PrepayResponse>(url, requestBodyJson);
+        var result = await RestRequestAsync<PrepayResponse>(API_URL, requestBodyJson);
         return result.PrepayId;
     }
 
@@ -60,14 +61,14 @@ public class EasyPayWechat : IEasyPayWechat
     /// </summary>
     /// <param name="outTradeNo">商户单号(2选1).</param>
     /// <param name="tradeNo">微信支付单号(2选1).</param>
-    /// <param name="securityInfo">支付安全信息(即时模式用).</param>
+    /// <param name="securityOptions">支付安全(即时模式用).</param>
     /// <returns>支付查询结果.</returns>
     /// <exception cref="Exception">单号为空.</exception>
-    public async Task<PayQueryResponse> WechatQueryPayAsync(string outTradeNo, string tradeNo, WechatPaySecurityInfo? securityInfo = null)
+    public async Task<PayQueryResponse> WechatQueryPayAsync(string outTradeNo, string tradeNo, WechatPaySecurityOptions? securityOptions = null)
     {
-        if(securityInfo != null)
+        if(securityOptions != null)
         {
-            _securityInfo = securityInfo;
+            _securityOptions = securityOptions;
         }
 
         string? type, no;
@@ -86,24 +87,24 @@ public class EasyPayWechat : IEasyPayWechat
             throw new Exception("商户单号与微信支付单号都为空");
         }
 
-        var url = $"https://api.mch.weixin.qq.com/v3/pay/transactions/{type}/{no}?mchid={_securityInfo.MchId}";
+        var url = $"https://api.mch.weixin.qq.com/v3/pay/transactions/{type}/{no}?mchid={_securityOptions.MchId}";
         return await RestRequestAsync<PayQueryResponse>(url);
     }
 
     /// <summary>
     /// 退款.
     /// </summary>
-    /// <param name="securityInfo">支付安全信息(即时模式用).</param>
+    /// <param name="securityOptions">支付安全(即时模式用).</param>
     /// <param name="refundModel">退款信息.</param>
     /// <returns>结果信息.</returns>
-    public async Task<RefundResponse> WechatRefundAsync(RefundModel refundModel, WechatPaySecurityInfo? securityInfo = null)
+    public async Task<RefundResponse> WechatRefundAsync(RefundModel refundModel, WechatPaySecurityOptions? securityOptions = null)
     {
-        if(securityInfo != null)
+        if(securityOptions != null)
         {
-            _securityInfo = securityInfo;
+            _securityOptions = securityOptions;
         }
 
-        const string url = "https://api.mch.weixin.qq.com/v3/refund/domestic/refunds";
+        const string API_URL = "https://api.mch.weixin.qq.com/v3/refund/domestic/refunds";
         var requstBody = new RefundRequest
         {
             OutfefundNo = refundModel.RefundNo,
@@ -116,20 +117,20 @@ public class EasyPayWechat : IEasyPayWechat
             }
         };
         var requstBodyJson = JsonConvert.SerializeObject(requstBody);
-        return await RestRequestAsync<RefundResponse>(url, requstBodyJson);
+        return await RestRequestAsync<RefundResponse>(API_URL, requstBodyJson);
     }
 
     /// <summary>
     /// 查询退款.
     /// </summary>
     /// <param name="refundNo">退款单号.</param>
-    /// <param name="securityInfo">支付安全信息(即时模式用).</param>
+    /// <param name="securityOptions">支付安全(即时模式用).</param>
     /// <returns>查询结果.</returns>
-    public async Task<RefundQueryResponse> WechatQueryRefundAsync(string refundNo, WechatPaySecurityInfo? securityInfo = null)
+    public async Task<RefundQueryResponse> WechatQueryRefundAsync(string refundNo, WechatPaySecurityOptions? securityOptions = null)
     {
-        if(securityInfo != null)
+        if(securityOptions != null)
         {
-            _securityInfo = securityInfo;
+            _securityOptions = securityOptions;
         }
 
         var url = $"https://api.mch.weixin.qq.com/v3/refund/domestic/refunds/{refundNo}";
@@ -139,17 +140,17 @@ public class EasyPayWechat : IEasyPayWechat
     /// <summary>
     /// 获取支付平台证书(验签用).
     /// </summary>
-    /// <param name="securityInfo">支付安全信息(即时模式用).</param>
+    /// <param name="securityOptions">支付安全(即时模式用).</param>
     /// <returns>支付平台证书.</returns>
-    public async Task<List<PlatCert>> WechatGetCertificatesAsync(WechatPaySecurityInfo? securityInfo = null)
+    public async Task<List<PlatCert>> WechatGetCertificatesAsync(WechatPaySecurityOptions? securityOptions = null)
     {
-        if(securityInfo != null)
+        if(securityOptions != null)
         {
-            _securityInfo = securityInfo;
+            _securityOptions = securityOptions;
         }
 
-        const string url = "https://api.mch.weixin.qq.com/v3/certificates";
-        var result = await RestRequestAsync<PlactCertResponse>(url);
+        const string API_URL = "https://api.mch.weixin.qq.com/v3/certificates";
+        var result = await RestRequestAsync<PlactCertResponse>(API_URL);
         return result.data.ConvertAll(p => new PlatCert
         {
             SerialNo = p.serial_no,
@@ -163,16 +164,16 @@ public class EasyPayWechat : IEasyPayWechat
     /// 小程序支付签名.
     /// </summary>
     /// <param name="prepayid">预付订单id.</param>
-    /// <param name="securityInfo">支付安全信息(即时模式用).</param>
+    /// <param name="securityOptions">支付安全(即时模式用).</param>
     /// <returns>小程序支付签名包.</returns>
-    public WeAppSignInfo MiniAppSign(string prepayid, WechatPaySecurityInfo? securityInfo = null)
+    public WeAppSignInfo MiniAppSign(string prepayid, WechatPaySecurityOptions? securityOptions = null)
     {
-        if(securityInfo != null)
+        if(securityOptions != null)
         {
-            _securityInfo = securityInfo;
+            _securityOptions = securityOptions;
         }
 
-        var appId = _securityInfo.AppId;
+        var appId = _securityOptions.AppId;
         var timeStamp = (int)DateTimeOffset.UtcNow.ToUnixTimeSeconds();
         var nonceStr = Path.GetRandomFileName();
         var package = $"prepay_id={prepayid}";
@@ -194,14 +195,14 @@ public class EasyPayWechat : IEasyPayWechat
     /// 回应:return Ok()/BadRequest("'code':'FAIL','message':'验签失败'");
     /// </summary>
     /// <param name="request">回调通知请求.</param>
-    /// <param name="securityInfo">支付安全信息(即时模式用).</param>
+    /// <param name="securityOptions">支付安全(即时模式用).</param>
     /// <returns>支付查询结果.</returns>
     /// <exception cref="Exception">处理异常.</exception>
-    public async Task<PayQueryResponse> WechatNotifyHandleAsync(HttpRequest request, WechatPaySecurityInfo? securityInfo = null)
+    public async Task<PayQueryResponse> WechatNotifyHandleAsync(HttpRequest request, WechatPaySecurityOptions? securityOptions = null)
     {
-        if(securityInfo != null)
+        if(securityOptions != null)
         {
-            _securityInfo = securityInfo;
+            _securityOptions = securityOptions;
         }
 
         var reader = new StreamReader(request.Body);
@@ -255,7 +256,7 @@ public class EasyPayWechat : IEasyPayWechat
         }
         else
         {
-            throw new Exception($"[{(int)response.StatusCode}]{response.ErrorMessage}");
+            throw new Exception($"ErrorCode:{(int)response.StatusCode}");
         }
     }
 
@@ -270,7 +271,7 @@ public class EasyPayWechat : IEasyPayWechat
     {
         var gcmBlockCipher = new GcmBlockCipher(new AesEngine());
         var aeadParameters = new AeadParameters(
-            new KeyParameter(Encoding.UTF8.GetBytes(_securityInfo.Key)),
+            new KeyParameter(Encoding.UTF8.GetBytes(_securityOptions.Key)),
             128,
             Encoding.UTF8.GetBytes(nonce),
             Encoding.UTF8.GetBytes(associatedData));
@@ -293,14 +294,14 @@ public class EasyPayWechat : IEasyPayWechat
     /// <returns>验签结果.</returns>
     private bool WechatVerifySign(string signature, string stamp, string nonce, string? bodyjson)
     {
-        if(!File.Exists(_securityInfo.PlatCertPath))
+        if(!File.Exists(_securityOptions.PlatCertPath))
         {
             throw new Exception("微信平台证书文件不存在");
         }
 
         var messageData = Encoding.UTF8.GetBytes($"{stamp}\n{nonce}\n{bodyjson}\n");
 
-        var cert = new X509Certificate(_securityInfo.PlatCertPath);
+        var cert = new X509Certificate(_securityOptions.PlatCertPath);
         var resultsTrue = cert.GetPublicKey();
 
         var myrsa = RSA.Create();
@@ -324,7 +325,7 @@ public class EasyPayWechat : IEasyPayWechat
         var signStr = $"{method}\n{url}\n{timestamp}\n{nonce}\n{requestBodyJson ?? string.Empty}\n";
         var signature = SHA256WithRSASign(signStr);
 
-        return $" WECHATPAY2-SHA256-RSA2048 mchid=\"{_securityInfo.MchId}\",nonce_str=\"{nonce}\",signature=\"{signature}\",timestamp=\"{timestamp}\",serial_no=\"{_securityInfo.CertSerialno}\"";
+        return $" WECHATPAY2-SHA256-RSA2048 mchid=\"{_securityOptions.MchId}\",nonce_str=\"{nonce}\",signature=\"{signature}\",timestamp=\"{timestamp}\",serial_no=\"{_securityOptions.CertSerialno}\"";
     }
 
     /// <summary>
@@ -334,12 +335,12 @@ public class EasyPayWechat : IEasyPayWechat
     /// <returns>签名.</returns>
     private string SHA256WithRSASign(string signStr)
     {
-        if(!File.Exists(_securityInfo.PrivateKeyPath))
+        if(!File.Exists(_securityOptions.PrivateKeyPath))
         {
             throw new Exception("微信私钥证书文件不存在");
         }
 
-        using var fileStream = new FileStream(_securityInfo.PrivateKeyPath, FileMode.Open);
+        using var fileStream = new FileStream(_securityOptions.PrivateKeyPath, FileMode.Open);
         using var reader = new StreamReader(fileStream);
         var privateKey = reader.ReadToEnd()
             .Replace("-----BEGIN PRIVATE KEY-----", string.Empty)

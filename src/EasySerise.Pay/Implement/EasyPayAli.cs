@@ -2,9 +2,8 @@
 using Aop.Api.Request;
 using Aop.Api.Response;
 using Aop.Api.Util;
-using EasySeries.Pay.Models.Ali;
+using EasySeries.Pay.Options;
 using EasySerise.Pay.Models.Ali;
-using System.Security.AccessControl;
 
 namespace EasySerise.Pay.Implement;
 
@@ -13,37 +12,38 @@ namespace EasySerise.Pay.Implement;
 /// </summary>
 public class EasyPayAli : IEasyPayAli
 {
-    private const string _alipayUrl = "https://openapi.alipay.com/gateway.do";
+    private const string _ali_PAY_URL = "https://openapi.alipay.com/gateway.do";
 
-    private AliPaySecurityInfo _securityInfo;
+    private AliPaySecurityOptions _securityOptions;
+
 
     /// <summary>
     /// 初始化.
     /// </summary>
-    /// <param name="securityInfo">支付安全信息.</param>
-    public EasyPayAli(AliPaySecurityInfo securityInfo)
+    /// <param name="securityOptions">支付安全信息.</param>
+    public EasyPayAli(IOptions<AliPaySecurityOptions> securityOptions)
     {
-        _securityInfo = securityInfo;
+        _securityOptions = securityOptions.Value;
     }
 
     /// <summary>
     /// 支付(手机网页).
     /// </summary>
     /// <param name="payModel">支付model.</param>
-    /// <param name="securityInfo">支付安全信息(即时模式用).</param>
+    /// <param name="securityOptions">支付安全信息(即时模式用).</param>
     /// <returns>支付响应结果.</returns>
-    public AlipayTradeWapPayResponse AlipayWap(AliPayModel payModel, AliPaySecurityInfo? securityInfo = null)
+    public AlipayTradeWapPayResponse AlipayWap(AliPayModel payModel, AliPaySecurityOptions? securityOptions = null)
     {
-        if(securityInfo != null)
+        if(securityOptions != null)
         {
-            _securityInfo = securityInfo;
+            _securityOptions = securityOptions;
         }
 
-        var privateKey = GetKeyFromFile(_securityInfo.PrivateKeyPath);
-        var publicKey = GetKeyFromFile(_securityInfo.AliPublicKeyPath);
-        var client = new DefaultAopClient(_alipayUrl, _securityInfo.AppId, privateKey, "json", "1.0", "RSA2", publicKey, "UTF-8", false);
+        var privateKey = GetKeyFromFile(_securityOptions.PrivateKeyPath);
+        var publicKey = GetKeyFromFile(_securityOptions.AliPublicKeyPath);
+        var client = new DefaultAopClient(_ali_PAY_URL, _securityOptions.AppId, privateKey, "json", "1.0", "RSA2", publicKey, "UTF-8", false);
         var request = new AlipayTradeWapPayRequest();
-        request.SetNotifyUrl(_securityInfo.PayNotifyUrl);
+        request.SetNotifyUrl(_securityOptions.PayNotifyUrl);
         request.SetReturnUrl(payModel.ReturnUrl);
         var bizContent = new Dictionary<string, object>
             {
@@ -60,18 +60,18 @@ public class EasyPayAli : IEasyPayAli
     /// 账单查询.
     /// </summary>
     /// <param name="outTradeNo">商户单号.</param>
-    /// <param name="securityInfo">支付安全信息(即时模式用).</param>
+    /// <param name="securityOptions">支付安全信息(即时模式用).</param>
     /// <returns>查询响应结果.</returns>
-    public AlipayTradeQueryResponse AlipayQuery(string outTradeNo, AliPaySecurityInfo? securityInfo = null)
+    public AlipayTradeQueryResponse AlipayQuery(string outTradeNo, AliPaySecurityOptions? securityOptions = null)
     {
-        if(securityInfo != null)
+        if(securityOptions != null)
         {
-            _securityInfo = securityInfo;
+            _securityOptions = securityOptions;
         }
 
-        var privateKey = GetKeyFromFile(_securityInfo.PrivateKeyPath);
-        var publicKey = GetKeyFromFile(_securityInfo.AliPublicKeyPath);
-        var client = new DefaultAopClient(_alipayUrl, _securityInfo.AppId, privateKey, "json", "1.0", "RSA2", publicKey, "UTF-8", false);
+        var privateKey = GetKeyFromFile(_securityOptions.PrivateKeyPath);
+        var publicKey = GetKeyFromFile(_securityOptions.AliPublicKeyPath);
+        var client = new DefaultAopClient(_ali_PAY_URL, _securityOptions.AppId, privateKey, "json", "1.0", "RSA2", publicKey, "UTF-8", false);
         var request = new AlipayTradeQueryRequest();
         var bizContent = new Dictionary<string, object>
             {
@@ -85,18 +85,18 @@ public class EasyPayAli : IEasyPayAli
     /// 退款.
     /// </summary>
     /// <param name="refundModel">退款模型.</param>
-    /// <param name="securityInfo">支付安全信息(即时模式用).</param>
+    /// <param name="securityOptions">支付安全信息(即时模式用).</param>
     /// <returns>退款响应结果.</returns>
-    public AlipayTradeRefundResponse AlipayRefund(AliPayRefundModel refundModel, AliPaySecurityInfo? securityInfo = null)
+    public AlipayTradeRefundResponse AlipayRefund(AliPayRefundModel refundModel, AliPaySecurityOptions? securityOptions = null)
     {
-        if(securityInfo != null)
+        if(securityOptions != null)
         {
-            _securityInfo = securityInfo;
+            _securityOptions = securityOptions;
         }
 
-        var privateKey = GetKeyFromFile(_securityInfo.PrivateKeyPath);
-        var publicKey = GetKeyFromFile(_securityInfo.AliPublicKeyPath);
-        var client = new DefaultAopClient(_alipayUrl, _securityInfo.AppId, privateKey, "json", "1.0", "RSA2", publicKey, "UTF-8", false);
+        var privateKey = GetKeyFromFile(_securityOptions.PrivateKeyPath);
+        var publicKey = GetKeyFromFile(_securityOptions.AliPublicKeyPath);
+        var client = new DefaultAopClient(_ali_PAY_URL, _securityOptions.AppId, privateKey, "json", "1.0", "RSA2", publicKey, "UTF-8", false);
         var request = new AlipayTradeRefundRequest();
         var bizContent = new Dictionary<string, object>
             {
@@ -113,18 +113,18 @@ public class EasyPayAli : IEasyPayAli
     /// 关闭订单.
     /// </summary>
     /// <param name="outTradeNO">商户单号.</param>
-    /// <param name="securityInfo">支付安全信息(即时模式用).</param>
+    /// <param name="securityOptions">支付安全信息(即时模式用).</param>
     /// <returns>关闭退款响应结果.</returns>
-    public AlipayTradeCloseResponse AlipayClose(string outTradeNO, AliPaySecurityInfo? securityInfo = null)
+    public AlipayTradeCloseResponse AlipayClose(string outTradeNO, AliPaySecurityOptions? securityOptions = null)
     {
-        if(securityInfo != null)
+        if(securityOptions != null)
         {
-            _securityInfo = securityInfo;
+            _securityOptions = securityOptions;
         }
 
-        var privateKey = GetKeyFromFile(_securityInfo.PrivateKeyPath);
-        var publicKey = GetKeyFromFile(_securityInfo.AliPublicKeyPath);
-        var client = new DefaultAopClient(_alipayUrl, _securityInfo.AppId, privateKey, "json", "1.0", "RSA2", publicKey, "UTF-8", false);
+        var privateKey = GetKeyFromFile(_securityOptions.PrivateKeyPath);
+        var publicKey = GetKeyFromFile(_securityOptions.AliPublicKeyPath);
+        var client = new DefaultAopClient(_ali_PAY_URL, _securityOptions.AppId, privateKey, "json", "1.0", "RSA2", publicKey, "UTF-8", false);
         var request = new AlipayTradeCloseRequest();
         var bizContent = new Dictionary<string, object>
             {
@@ -139,14 +139,14 @@ public class EasyPayAli : IEasyPayAli
     /// 回应:await Response.WriteAsync("success/fail");
     /// </summary>
     /// <param name="request">回调通知请求.</param>
-    /// <param name="securityInfo">支付安全信息(即时模式用).</param>
+    /// <param name="securityOptions">支付安全信息(即时模式用).</param>
     /// <returns>通知内容.</returns>
     /// <exception cref="Exception">请求异常.</exception>
-    public NofityModel AlipayNotifyHandle(HttpRequest request, AliPaySecurityInfo? securityInfo = null)
+    public NofityModel AlipayNotifyHandle(HttpRequest request, AliPaySecurityOptions? securityOptions = null)
     {
-        if(securityInfo != null)
+        if(securityOptions != null)
         {
-            _securityInfo = securityInfo;
+            _securityOptions = securityOptions;
         }
 
         var requestDic = new Dictionary<string, string>();
@@ -160,7 +160,7 @@ public class EasyPayAli : IEasyPayAli
             throw new Exception("fail");
         }
 
-        bool verify = AliVerifySign(requestDic, _securityInfo.AliPublicKeyPath);
+        bool verify = AliVerifySign(requestDic, _securityOptions.AliPublicKeyPath);
         if(!verify)
         {
             throw new Exception("fail");

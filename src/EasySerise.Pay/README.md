@@ -5,32 +5,28 @@ Easy支付，Easy系列的首个应用，用于微信支付，阿里支付。
 ### 使用说明:
 
 #### 预先配置模式
+```json
+//appsettings.json
+  "AliPaySecurityOptions": {
+    "AppId": "xxx",
+    "PrivateKeyPath": "xx/xx.txt",
+    "AliPublicKeyPath": "xx/xx.txt",
+    "PayNotifyUrl": "https://xx/api/xxx"
+  },
+  "WechatPaySecurityOptions": {
+    "AppId": "xxx",
+    "MchId": "xxx",
+    "Key": "v3 key",
+    "CertSerialno": "xxx",
+    "PlatCertPath": "xx/xx.pem",
+    "PrivateKeyPath": "xx/xx.pem",
+    "PayNotifyUrl": "https://xx/api/xxx"
+  }
+```
 
 ```c#
 //注册
-using EasySeries.Pay.Models.Ali;
-using EasySerise.Pay.AspNetCore;
-using EasySerise.Pay.Models.Wechat;
-
-var aliInfo = new AliPaySecurityInfo
-{
-    AppId = "your appid",
-    PrivateKeyPath = "file path .txt",
-    AliPublicKeyPath = "file path .txt",
-    PayNotifyUrl = "your api url"
-};
-var wechatInfo = new WechatPaySecurityInfo
-{
-    AppId = "your appid",
-    MchId = "your MchId",
-    Key = "v3 key",
-    CertSerialno = "",
-    PlatCertPath = "file path .pem",
-    PrivateKeyPath = "file path .pem",
-    PayNotifyUrl = "your api url"
-};
-
-builder.Services.AddEasyPayService(aliInfo, wechatInfo);
+builder.Services.AddEasyPayService();
 
 //使用
 public YourController(IEasyPayWechat easyPayWechat, IEasyPayAli easyPayAli)
@@ -56,8 +52,6 @@ public AlipayTradeQueryResponse QueryAli(string outTradeNo)
 
 ```c#
 //注册
-using EasySerise.Pay.AspNetCore;
-
 builder.Services.AddEasyPayService();
 
 //使用
@@ -70,7 +64,7 @@ public YourController(IEasyPayWechat easyPayWechat, IEasyPayAli easyPayAli)
 [HttpGet("wechat")]
 public async Task<PayQueryResponse> QueryAsync(string outTradeNo)
 {
-    var wechatInfo = new WechatPaySecurityInfo
+    var options = new WechatPaySecurityOptions
     {
       AppId = "your appid",
       MchId = "your MchId",
@@ -80,19 +74,19 @@ public async Task<PayQueryResponse> QueryAsync(string outTradeNo)
       PrivateKeyPath = "file path .pem",
       PayNotifyUrl = "your api url"
     };
-    return await _easyPayWechat.WechatQueryPayAsync(outTradeNo, "", wechatInfo);
+    return await _easyPayWechat.WechatQueryPayAsync(outTradeNo, "", options);
 }
     
 [HttpGet("ali")]
 public AlipayTradeQueryResponse QueryAli(string outTradeNo)
 {
-    var aliInfo = new AliPaySecurityInfo
+    var options = new AliPaySecurityOptions
     {
       AppId = "your appid",
       PrivateKeyPath = "file path .txt",
       AliPublicKeyPath = "file path .txt",
       PayNotifyUrl = "your api url"
     };
-    return _easyPayAli.AlipayQuery(outTradeNo, aliInfo);
+    return _easyPayAli.AlipayQuery(outTradeNo, options);
 }
 ```
