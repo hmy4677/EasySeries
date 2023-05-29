@@ -5,7 +5,7 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-		<Version>3.0.0</Version>
+		<Version>3.1.1</Version>
 		<Authors>何明钰</Authors>
 		<Product>Easy系列-支付</Product>
 		<Title>EasySeries.Pay</Title>
@@ -26,10 +26,10 @@
 	<ItemGroup>
 		<PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
 		<PackageReference Include="AlipaySDKNet.Standard" Version="4.7.238" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <ProjectReference Include="..\EasySerise.Core\EasySerise.Core\EasySerise.Core.csproj" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="7.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Options" Version="7.0.1" />
+		<PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="7.0.0" />
+		<PackageReference Include="RestSharp" Version="110.2.0" />
 	</ItemGroup>
 
 	<ItemGroup>
