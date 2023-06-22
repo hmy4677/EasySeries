@@ -14,7 +14,7 @@ public interface IEasyPayWechat
     /// <param name="prepayid">预付订单id.</param>
     /// <param name="securityOptions">支付安全(即时模式用).</param>
     /// <returns>小程序支付签名包.</returns>
-    WeAppSignInfo MiniAppSign(string prepayid, WechatPaySecurityOptions? securityOptions = null);
+    MiniAppSignInfo MiniAppSign(string prepayid, WechatPaySecurityOptions? securityOptions = null);
 
     /// <summary>
     /// 获取支付平台证书(验签用).
@@ -33,13 +33,13 @@ public interface IEasyPayWechat
     Task<PayQueryResponse> WechatNotifyHandleAsync(HttpRequest request, WechatPaySecurityOptions? securityOptions = null);
 
     /// <summary>
-    /// 查询支付.
+    /// 支付查询.
     /// </summary>
     /// <param name="outTradeNo">商户单号(2选1).</param>
     /// <param name="tradeNo">微信支付单号(2选1).</param>
     /// <param name="securityOptions">支付安全(即时模式用).</param>
     /// <returns>支付查询结果.</returns>
-    /// <exception cref="Exception">单号为空.</exception>
+    /// <exception cref="ArgumentNullException">单号为空.</exception>
     Task<PayQueryResponse> WechatQueryPayAsync(string outTradeNo, string tradeNo, WechatPaySecurityOptions? securityOptions = null);
 
     /// <summary>

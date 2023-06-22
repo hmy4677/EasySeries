@@ -3,7 +3,7 @@
 /// <summary>
 /// 微信小程序签名(用于拉起支付).
 /// </summary>
-public class WeAppSignInfo
+public class MiniAppSignInfo
 {
     public string AppId { get; set; } = string.Empty;
     public string NonceStr { get; set; } = string.Empty;
