@@ -1,4 +1,5 @@
 using EasySerise.Pay.AspNetCore;
+using EasySerise.Post.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,6 +11,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddEasyPayService();
+builder.Services.AddEasyPostService();
 
 var app = builder.Build();
 
