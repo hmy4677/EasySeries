@@ -13,7 +13,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\EasySerise.Pay\EasySeries.Pay.csproj" />
-    <ProjectReference Include="..\EasySerise.Post\EasySerise.Post\EasySerise.Post.csproj" />
+    <ProjectReference Include="..\EasySerise.Post\EasySerise.Post.csproj" />
   </ItemGroup>
 
 </Project>
