@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>48518edf-c8a1-4bb2-9fe6-c4f0e4f0154c</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\EasySeries.Pay\EasySeries.Pay.csproj" />
+    <ProjectReference Include="..\EasySeries.Post\EasySeries.Post.csproj" />
+  </ItemGroup>
+
+</Project>
