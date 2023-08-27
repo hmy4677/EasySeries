@@ -6,8 +6,8 @@
     <Nullable>enable</Nullable>
     <Title>EasySeries.Post</Title>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <Version>3.0.1</Version>
-    <Authors>何明钰</Authors>
+    <Version>3.0.2</Version>
+    <Authors>何明钰(hmy4677)</Authors>
     <Product>Easy系列-邮寄</Product>
     <Description>快递100与京东物流</Description>
     <Copyright>MIT</Copyright>
@@ -15,6 +15,10 @@
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
     <AssemblyVersion></AssemblyVersion>
+    <RepositoryUrl>https://github.com/hmy4677/EasySeries</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/hmy4677/EasySeries</PackageProjectUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>post;快递;物流;kuaidi100,快递100;京东物流;JDL</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>
