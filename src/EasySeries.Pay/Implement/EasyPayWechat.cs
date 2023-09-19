@@ -50,7 +50,7 @@ public class EasyPayWechat : IEasyPayWechat
             Description = payModel.Description,
             OutTradeNo = payModel.OutTradeNO,
             Amount = new PreOrderAmount { Total = payModel.Amount },
-            Payer = new PayerInfo { Openid = payModel.OpenId }
+            Payer = new PayerInfo { OpenId = payModel.OpenId }
         };
         var requestBodyJson = JsonConvert.SerializeObject(requestBody);
         var result = await RestRequestAsync<PrepayResponse>(API_URL, requestBodyJson);
@@ -223,7 +223,7 @@ public class EasyPayWechat : IEasyPayWechat
         }
 
         var notify = JsonConvert.DeserializeObject<NotifyModel>(bodyJson);
-        var decrypt = AesGcmDecrypt(notify.resource.associated_data, notify.resource.nonce, notify.resource.ciphertext);
+        var decrypt = AesGcmDecrypt(notify.Resource.AssociatedData, notify.Resource.Nonce, notify.Resource.Ciphertext);
         return JsonConvert.DeserializeObject<PayQueryResponse>(decrypt);
     }
 
@@ -271,6 +271,11 @@ public class EasyPayWechat : IEasyPayWechat
     /// <returns>解密结果.</returns>
     private string AesGcmDecrypt(string associatedData, string nonce, string ciphertext)
     {
+        if(string.IsNullOrEmpty(associatedData) || string.IsNullOrEmpty(nonce) || string.IsNullOrEmpty(ciphertext))
+        {
+            throw new ArgumentNullException($"解密失败:参数为空");
+        }
+
         var gcmBlockCipher = new GcmBlockCipher(new AesEngine());
         var aeadParameters = new AeadParameters(
             new KeyParameter(Encoding.UTF8.GetBytes(_securityOptions.Key)),

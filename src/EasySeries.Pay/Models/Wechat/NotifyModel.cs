@@ -8,32 +8,38 @@ internal class NotifyModel
     /// <summary>
     /// 通知ID.
     /// </summary>
-    internal string id { get; set; } = string.Empty;
+    [JsonProperty("id")]
+    internal string Id { get; set; } = string.Empty;
 
     /// <summary>
     /// 通知创建时间.
     /// </summary>
-    internal string create_time { get; set; } = string.Empty;
+    [JsonProperty("create_time")]
+    internal string CreateTime { get; set; } = string.Empty;
 
     /// <summary>
     /// 通知类型.
     /// </summary>
-    internal string event_type { get; set; } = string.Empty;
+    [JsonProperty("event_type")]
+    internal string EventType { get; set; } = string.Empty;
 
     /// <summary>
     /// 通知数据类型.
     /// </summary>
-    internal string resource_type { get; set; } = string.Empty;
+    [JsonProperty("resource_type")]
+    internal string EesourceType { get; set; } = string.Empty;
 
     /// <summary>
     /// 回调摘要.
     /// </summary>
-    internal string summary { get; set; } = string.Empty;
+    [JsonProperty("summary")]
+    internal string Summary { get; set; } = string.Empty;
 
     /// <summary>
     /// 通知数据.
     /// </summary>
-    internal ResourceInfo resource { get; set; } = new ResourceInfo();
+    [JsonProperty("resource")]
+    internal ResourceInfo Resource { get; set; } = new ResourceInfo();
 }
 
 /// <summary>
@@ -44,25 +50,30 @@ internal class ResourceInfo
     /// <summary>
     /// 加密算法类型.
     /// </summary>
-    internal string algorithm { get; set; } = string.Empty;
+    [JsonProperty("algorithm")]
+    internal string Algorithm { get; set; } = string.Empty;
 
     /// <summary>
     /// 数据密文.
     /// </summary>
-    internal string ciphertext { get; set; } = string.Empty;
+    [JsonProperty("ciphertext")]
+    internal string Ciphertext { get; set; } = string.Empty;
 
     /// <summary>
     /// 附加数据.
     /// </summary>
-    internal string associated_data { get; set; } = string.Empty;
+    [JsonProperty("associated_data")]
+    internal string AssociatedData { get; set; } = string.Empty;
 
     /// <summary>
     /// 原始类型.
     /// </summary>
-    internal string original_type { get; set; } = string.Empty;
+    [JsonProperty("original_type")]
+    internal string OriginalType { get; set; } = string.Empty;
 
     /// <summary>
     /// 随机串.
     /// </summary>
-    internal string nonce { get; set; } = string.Empty;
+    [JsonProperty("nonce")]
+    internal string Nonce { get; set; } = string.Empty;
 }

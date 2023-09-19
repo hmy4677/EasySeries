@@ -2,6 +2,7 @@
 using EasySeries.Pay;
 using EasySeries.Pay.Models.Wechat;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 namespace EasySeries.Simple.Controllers;
 
@@ -41,5 +42,24 @@ public class PaymentController : ControllerBase
     public AlipayTradeQueryResponse QueryAli(string outTradeNo)
     {
         return _easyPayAli.AlipayQuery(outTradeNo);
+    }
+
+    [HttpPost("wechat_callback")]
+    public async Task<IActionResult> WechatCallbackAsync()
+    {
+        try
+        {
+            await _easyPayWechat.WechatNotifyHandleAsync(Request);
+            return Ok();
+        }
+        catch(Exception ex)
+        {
+            var res = new
+            {
+                code = "FAIL",
+                message = ex.Message
+            };
+            return BadRequest(JsonConvert.SerializeObject(res));
+        }
     }
 }

@@ -28,5 +28,6 @@ public class RefundModel
     /// <summary>
     /// 退款原因.
     /// </summary>
+    [MinLength(1)]
     public string Reason { get; set; } = string.Empty;
 }

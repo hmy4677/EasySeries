@@ -9,5 +9,5 @@ public class PayerInfo
     /// openid.
     /// </summary>
     [JsonProperty("openid")]
-    public string Openid { get; set; } = string.Empty;
+    public string OpenId { get; set; } = string.Empty;
 }
