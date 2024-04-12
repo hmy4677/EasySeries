@@ -4,23 +4,25 @@ Easy支付，Easy系列的首个应用，用于微信支付，阿里支付。
 
 ### 使用说明:
 
-#### 预先配置模式
+#### 配置模式-支付配置Appsettings
 ```json
 //appsettings.json
   "AliPaySecurityOptions": {
-    "AppId": "xxx",
+    "AppId": "xxx", //应用id(微信JSAPI,支付宝WAP).
     "PrivateKeyPath": "xx/xx.txt",
     "AliPublicKeyPath": "xx/xx.txt",
     "PayNotifyUrl": "https://xx/api/xxx"
   },
   "WechatPaySecurityOptions": {
-    "AppId": "xxx",
+    "AppId": "xxx", //应用id(微信JSAPI,支付宝WAP).
+    "MobileAppId": "xxx", //移动应用Id.
     "MchId": "xxx",
     "Key": "v3 key",
     "CertSerialno": "xxx",//公钥证书序列号
-    "PlatCertPath": "xx/xx.pem",//平台证书文件
-    "PrivateKeyPath": "xx/xx.pem",//私钥文件
-    "PayNotifyUrl": "https://xx/api/xxx"
+    "IsVerifySign": false, //回调通知是否验签(暂无平台证书公钥的可不验签-不安全).
+    "PlatCertPath": "xx/xx.pem", //平台证书公钥文件.
+    "PrivateKeyPath": "xx/xx.pem", //私钥文件.
+    "PayNotifyUrl": "https://xx/api/xxx" //回调通知url.
   }
 ```
 
@@ -48,7 +50,7 @@ public AlipayTradeQueryResponse QueryAli(string outTradeNo)
 }
 ```
 
-#### 即时配置模式
+#### 即时模式-支付配置-可从数据库读取
 
 ```c#
 //注册
@@ -154,6 +156,14 @@ public interface IEasyPayWechat
     MiniAppSignInfo MiniAppSign(string prepayid, WechatPaySecurityOptions? securityOptions = null);
 
     /// <summary>
+    /// APP支付签名.
+    /// </summary>
+    /// <param name="prepayid">预付订单id.</param>
+    /// <param name="securityOptions">支付安全(即时模式用).</param>
+    /// <returns>APP支付签名包.</returns>
+    AppSignInfo AppSign(string prepayid, WechatPaySecurityOptions? securityOptions = null);
+
+    /// <summary>
     /// 获取支付平台证书(验签用).
     /// </summary>
     /// <param name="securityOptions">支付安全(即时模式用).</param>
@@ -188,12 +198,20 @@ public interface IEasyPayWechat
     Task<RefundQueryResponse> WechatQueryRefundAsync(string refundNo, WechatPaySecurityOptions? securityOptions = null);
 
     /// <summary>
-    /// 生成预付订单.
+    /// 生成预付订单(JSAPI).
     /// </summary>
     /// <param name="payModel">支付信息model.</param>
     /// <param name="securityOptions">支付安全(即时模式用).</param>
     /// <returns>预付订单号.</returns>
     Task<string> WechatPrepayAsync(PayModel payModel, WechatPaySecurityOptions? securityOptions = null);
+
+    /// <summary>
+    /// 生成预付订单(APP).
+    /// </summary>
+    /// <param name="payModel">支付信息model.</param>
+    /// <param name="securityOptions">支付安全(即时模式用).</param>
+    /// <returns>预付订单号.</returns>
+    Task<string> WechatPrepayAsync(AppPayModel payModel, WechatPaySecurityOptions? securityOptions = null);
 
     /// <summary>
     /// 退款.
