@@ -1,5 +1,5 @@
-﻿using EasySeries.Pay.Options;
-using EasySeries.Pay.Models.Wechat;
+﻿using EasySeries.Pay.Models.Wechat;
+using EasySeries.Pay.Options;
 
 namespace EasySeries.Pay;
 
@@ -15,6 +15,14 @@ public interface IEasyPayWechat
     /// <param name="securityOptions">支付安全(即时模式用).</param>
     /// <returns>小程序支付签名包.</returns>
     MiniAppSignInfo MiniAppSign(string prepayid, WechatPaySecurityOptions? securityOptions = null);
+
+    /// <summary>
+    /// APP支付签名.
+    /// </summary>
+    /// <param name="prepayid">预付订单id.</param>
+    /// <param name="securityOptions">支付安全(即时模式用).</param>
+    /// <returns>APP支付签名包.</returns>
+    AppSignInfo AppSign(string prepayid, WechatPaySecurityOptions? securityOptions = null);
 
     /// <summary>
     /// 获取支付平台证书(验签用).
@@ -51,12 +59,20 @@ public interface IEasyPayWechat
     Task<RefundQueryResponse> WechatQueryRefundAsync(string refundNo, WechatPaySecurityOptions? securityOptions = null);
 
     /// <summary>
-    /// 生成预付订单.
+    /// 生成预付订单(JSAPI).
     /// </summary>
     /// <param name="payModel">支付信息model.</param>
     /// <param name="securityOptions">支付安全(即时模式用).</param>
     /// <returns>预付订单号.</returns>
     Task<string> WechatPrepayAsync(PayModel payModel, WechatPaySecurityOptions? securityOptions = null);
+
+    /// <summary>
+    /// 生成预付订单(APP).
+    /// </summary>
+    /// <param name="payModel">支付信息model.</param>
+    /// <param name="securityOptions">支付安全(即时模式用).</param>
+    /// <returns>预付订单号.</returns>
+    Task<string> WechatPrepayAsync(AppPayModel payModel, WechatPaySecurityOptions? securityOptions = null);
 
     /// <summary>
     /// 退款.

@@ -5,11 +5,11 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-		<Version>3.2.5</Version>
+		<Version>3.3.0</Version>
 		<Authors>何明钰(hmy4677)</Authors>
 		<Product>Easy系列-支付</Product>
 		<Title>EasySeries.Pay</Title>
-		<Description>微信支付,支付宝支付.预先配置模式,实时模式.</Description>
+		<Description>微信支付,支付宝支付;配置模式,实时模式.</Description>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
 		<PackageReadmeFile>README.md</PackageReadmeFile>

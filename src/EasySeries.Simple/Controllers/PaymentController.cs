@@ -25,11 +25,18 @@ public class PaymentController : ControllerBase
         return await _easyPayWechat.WechatQueryPayAsync(outTradeNo, "");
     }
 
-    [HttpPost("wechat")]
+    [HttpPost("wechat/jsapi")]
     public async Task<MiniAppSignInfo> WechatPayAsync([FromBody] PayModel pay)
     {
         var prepayId = await _easyPayWechat.WechatPrepayAsync(pay);
         return _easyPayWechat.MiniAppSign(prepayId);
+    }
+
+    [HttpPost("wechat/app")]
+    public async Task<AppSignInfo> WechatPayAsync([FromBody] AppPayModel pay)
+    {
+        var prepayId = await _easyPayWechat.WechatPrepayAsync(pay);
+        return _easyPayWechat.AppSign(prepayId);
     }
 
     [HttpPost("wechat/refund")]

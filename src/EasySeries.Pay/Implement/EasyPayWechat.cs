@@ -1,5 +1,5 @@
-﻿using EasySeries.Pay.Options;
-using EasySeries.Pay.Models.Wechat;
+﻿using EasySeries.Pay.Models.Wechat;
+using EasySeries.Pay.Options;
 using Org.BouncyCastle.Crypto.Engines;
 using Org.BouncyCastle.Crypto.Modes;
 using Org.BouncyCastle.Crypto.Parameters;
@@ -7,7 +7,6 @@ using RestSharp;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
-using System.Text.Json;
 
 namespace EasySeries.Pay.Implement;
 
@@ -28,7 +27,7 @@ public class EasyPayWechat : IEasyPayWechat
     }
 
     /// <summary>
-    /// 生成预付订单.
+    /// 生成预付订单(JSAPI).
     /// </summary>
     /// <param name="payModel">支付信息model.</param>
     /// <param name="securityOptions">支付安全(即时模式用).</param>
@@ -51,6 +50,35 @@ public class EasyPayWechat : IEasyPayWechat
             OutTradeNo = payModel.OutTradeNO,
             Amount = new PreOrderAmount { Total = payModel.Amount },
             Payer = new PayerInfo { OpenId = payModel.OpenId }
+        };
+        var requestBodyJson = JsonConvert.SerializeObject(requestBody);
+        var result = await RestRequestAsync<PrepayResponse>(API_URL, requestBodyJson);
+        return result.PrepayId;
+    }
+
+    /// <summary>
+    /// 生成预付订单(APP).
+    /// </summary>
+    /// <param name="payModel">支付信息model.</param>
+    /// <param name="securityOptions">支付安全(即时模式用).</param>
+    /// <returns>预付订单号.</returns>
+    public async Task<string> WechatPrepayAsync(AppPayModel payModel, WechatPaySecurityOptions? securityOptions = null)
+    {
+        if(securityOptions != null)
+        {
+            _securityOptions = securityOptions;
+        }
+
+        const string API_URL = "https://api.mch.weixin.qq.com/v3/pay/transactions/app";
+        var requestBody = new AppPrepayRequest
+        {
+            AppId = _securityOptions.MobileAppId,
+            Mchid = _securityOptions.MchId,
+            NotifyUrl = _securityOptions.PayNotifyUrl,
+
+            Description = payModel.Description,
+            OutTradeNo = payModel.OutTradeNO,
+            Amount = new PreOrderAmount { Total = payModel.Amount }
         };
         var requestBodyJson = JsonConvert.SerializeObject(requestBody);
         var result = await RestRequestAsync<PrepayResponse>(API_URL, requestBodyJson);
@@ -139,7 +167,7 @@ public class EasyPayWechat : IEasyPayWechat
     }
 
     /// <summary>
-    /// 获取支付平台证书(验签用).
+    /// 获取平台证书公钥(验签用).
     /// </summary>
     /// <param name="securityOptions">支付安全(即时模式用).</param>
     /// <returns>支付平台证书.</returns>
@@ -192,8 +220,37 @@ public class EasyPayWechat : IEasyPayWechat
     }
 
     /// <summary>
-    /// 回调通知处理.
-    /// 回应:return Ok()/BadRequest("'code':'FAIL','message':'验签失败'");
+    /// APP支付签名.
+    /// </summary>
+    /// <param name="prepayid">预付订单id.</param>
+    /// <param name="securityOptions">支付安全(即时模式用).</param>
+    /// <returns>APP支付签名包.</returns>
+    public AppSignInfo AppSign(string prepayid, WechatPaySecurityOptions? securityOptions = null)
+    {
+        if(securityOptions != null)
+        {
+            _securityOptions = securityOptions;
+        }
+
+        var appId = _securityOptions.MobileAppId;
+        var timeStamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString();
+        var nonceStr = Path.GetRandomFileName();
+        var signStr = $"{appId}\n{timeStamp}\n{nonceStr}\n{prepayid}\n";
+        var paySign = SHA256WithRSASign(signStr);
+        return new AppSignInfo
+        {
+            Appid = appId,
+            Noncestr = nonceStr,
+            Package = "Sign=WXPay",
+            Sign = paySign,
+            Timestamp = timeStamp,
+            Prepayid = prepayid,
+            Partnerid = _securityOptions.MchId
+        };
+    }
+
+    /// <summary>
+    /// 回调通知处理. 回应:return Ok()/BadRequest("'code':'FAIL','message':'验签失败'");
     /// </summary>
     /// <param name="request">回调通知请求.</param>
     /// <param name="securityOptions">支付安全(即时模式用).</param>
@@ -216,10 +273,14 @@ public class EasyPayWechat : IEasyPayWechat
         var signature = request.Headers["Wechatpay-Signature"];
         var stamp = request.Headers["Wechatpay-Timestamp"];
         var nonce = request.Headers["Wechatpay-Nonce"];
-        var verify = WechatVerifySign(signature, stamp, nonce, bodyJson);
-        if(!verify)
+
+        if(_securityOptions.IsVerifySign)
         {
-            throw new ArgumentException("验签失败");
+            var verify = WechatVerifySign(signature, stamp, nonce, bodyJson);
+            if(!verify)
+            {
+                throw new ArgumentException("验签失败");
+            }
         }
 
         var notify = JsonConvert.DeserializeObject<NotifyModel>(bodyJson);

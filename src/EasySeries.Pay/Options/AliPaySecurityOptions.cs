@@ -5,6 +5,9 @@
 /// </summary>
 public class AliPaySecurityOptions : PaySecurityOptions
 {
+    /// <summary>
+    /// 阿里支付配置名称.
+    /// </summary>
     public static readonly string SettingKey = "AliPaySecurityOptions";
 
     /// <summary>
