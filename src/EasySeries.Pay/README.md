@@ -9,20 +9,21 @@ Easy支付，Easy系列的首个应用，用于微信支付，阿里支付。
 //appsettings.json
   "AliPaySecurityOptions": {
     "AppId": "xxx", //应用id(微信JSAPI,支付宝WAP).
-    "PrivateKeyPath": "xx/xx.txt",
-    "AliPublicKeyPath": "xx/xx.txt",
-    "PayNotifyUrl": "https://xx/api/xxx"
+    "PrivateKeyPath": "xx/xx.txt", //私钥文件路径.
+    "AliPublicKeyPath": "xx/xx.txt", //阿里公钥文件路径.
+    "PayNotifyUrl": "https://xx/api/xxx" //支付回调通知url(必要).
   },
   "WechatPaySecurityOptions": {
     "AppId": "xxx", //应用id(微信JSAPI,支付宝WAP).
     "MobileAppId": "xxx", //移动应用Id.
-    "MchId": "xxx",
-    "Key": "v3 key",
+    "MchId": "xxxxx", //商户id.
+    "Key": "xxxxxx", //v3 key.
     "CertSerialno": "xxx",//公钥证书序列号
     "IsVerifySign": false, //回调通知是否验签(暂无平台证书公钥的可不验签-不安全).
-    "PlatCertPath": "xx/xx.pem", //平台证书公钥文件.
-    "PrivateKeyPath": "xx/xx.pem", //私钥文件.
-    "PayNotifyUrl": "https://xx/api/xxx" //回调通知url.
+    "PlatCertPath": "xx/xx.pem", //平台证书公钥文件路径.
+    "PrivateKeyPath": "xx/xx.pem", //私钥文件路径.
+    "PayNotifyUrl": "https://xxx.xx", //支付回调通知url(必要).
+    "RefundNotifyUrl": "https://xxx.xx" //退款回调通知url(必要).
   }
 ```
 

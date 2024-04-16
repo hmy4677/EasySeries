@@ -39,4 +39,9 @@ public class WechatPaySecurityOptions : PaySecurityOptions
     /// </summary>
     [Required]
     public string PlatCertPath { get; set; } = string.Empty;
+
+    /// <summary>
+    /// 退款通知回调url.
+    /// </summary>
+    public string RefundNotifyUrl { get; set; } = string.Empty;
 }

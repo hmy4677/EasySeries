@@ -28,4 +28,10 @@ internal class RefundRequest
     /// </summary>
     [JsonProperty("amount")]
     internal RefundAmount Amount { get; set; } = new RefundAmount();
+
+    /// <summary>
+    /// 退款结果回调url.
+    /// </summary>
+    [JsonProperty("notify_url")]
+    internal string NotifyUrl { get; set; }
 }

@@ -45,6 +45,12 @@ public class PaymentController : ControllerBase
         return await _easyPayWechat.WechatRefundAsync(refund);
     }
 
+    [HttpGet("wechat/refund/query")]
+    public async Task<RefundQueryResponse> WechatRefuncQueryAsync(string outRefundNO)
+    {
+        return await _easyPayWechat.WechatQueryRefundAsync(outRefundNO);
+    }
+
     [HttpGet("ali")]
     public AlipayTradeQueryResponse QueryAli(string outTradeNo)
     {

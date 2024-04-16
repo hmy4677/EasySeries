@@ -139,12 +139,14 @@ public class EasyPayWechat : IEasyPayWechat
             OutfefundNo = refundModel.RefundNo,
             OutTradeNo = refundModel.OutTradeNo,
             Reason = refundModel.Reason,
+            NotifyUrl = _securityOptions.RefundNotifyUrl,
             Amount = new RefundAmount
             {
                 Total = refundModel.TotalAmount,
                 Refund = refundModel.RefundAmount,
             }
         };
+
         var requstBodyJson = JsonConvert.SerializeObject(requstBody);
         return await RestRequestAsync<RefundResponse>(API_URL, requstBodyJson);
     }

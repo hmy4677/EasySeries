@@ -64,4 +64,16 @@ public class RefundResponse
     /// </summary>
     [JsonProperty("amount")]
     public RefundAmount Amount { get; set; } = new RefundAmount();
+
+    /// <summary>
+    /// 错误代码.
+    /// </summary>
+    [JsonProperty("code")]
+    public string Code { get; set; } = string.Empty;
+
+    /// <summary>
+    /// 消息.
+    /// </summary>
+    [JsonProperty("message")]
+    public string Message { get; set; } = string.Empty;
 }
