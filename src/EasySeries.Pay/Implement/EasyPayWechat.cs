@@ -259,6 +259,32 @@ public class EasyPayWechat : IEasyPayWechat
     /// <exception cref="Exception">处理异常.</exception>
     public async Task<PayQueryResponse> WechatNotifyHandleAsync(HttpRequest request, WechatPaySecurityOptions? securityOptions = null)
     {
+        return await NotifyHandleAsync<PayQueryResponse>(request, securityOptions);
+    }
+
+    /// <summary>
+    /// 退款回调通知处理. 回应:return Ok()/BadRequest("'code':'FAIL','message':'验签失败'");
+    /// </summary>
+    /// <param name="request">回调通知请求.</param>
+    /// <param name="securityOptions">支付安全(即时模式用).</param>
+    /// <returns>支付查询结果.</returns>
+    /// <exception cref="Exception">处理异常.</exception>
+    public async Task<RefundNotify> WechatRefundNotifyHandleAsync(HttpRequest request, WechatPaySecurityOptions? securityOptions = null)
+    {
+        return await NotifyHandleAsync<RefundNotify>(request, securityOptions);
+    }
+
+    /// <summary>
+    /// 回调通知处理.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="request"></param>
+    /// <param name="securityOptions"></param>
+    /// <returns></returns>
+    /// <exception cref="ArgumentNullException"></exception>
+    /// <exception cref="ArgumentException"></exception>
+    private async Task<T> NotifyHandleAsync<T>(HttpRequest request, WechatPaySecurityOptions? securityOptions = null)
+    {
         if(securityOptions != null)
         {
             _securityOptions = securityOptions;
@@ -286,7 +312,7 @@ public class EasyPayWechat : IEasyPayWechat
 
         var notify = JsonConvert.DeserializeObject<NotifyModel>(bodyJson);
         var decrypt = AesGcmDecrypt(notify.Resource.AssociatedData, notify.Resource.Nonce, notify.Resource.Ciphertext);
-        return JsonConvert.DeserializeObject<PayQueryResponse>(decrypt);
+        return JsonConvert.DeserializeObject<T>(decrypt);
     }
 
     /// <summary>
