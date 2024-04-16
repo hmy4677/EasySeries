@@ -5,10 +5,10 @@
 /// </summary>
 public class MiniAppSignInfo
 {
-    public string AppId { get; set; } = string.Empty;
+    public string AppId { get; set; }
+    public int TimeStamp { get; set; }
     public string NonceStr { get; set; } = string.Empty;
     public string Package { get; set; } = string.Empty;
+    public string SignType { get; set; } = "RSA";
     public string PaySign { get; set; } = string.Empty;
-    public int TimeStamp { get; set; }
-    public string Prepay_id { get; set; } = string.Empty;
 }

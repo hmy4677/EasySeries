@@ -215,7 +215,6 @@ public class EasyPayWechat : IEasyPayWechat
             Package = package,
             PaySign = paySign,
             TimeStamp = timeStamp,
-            Prepay_id = prepayid
         };
     }
 
