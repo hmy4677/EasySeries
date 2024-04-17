@@ -2,8 +2,8 @@
 using Aop.Api.Request;
 using Aop.Api.Response;
 using Aop.Api.Util;
-using EasySeries.Pay.Options;
 using EasySeries.Pay.Models.Ali;
+using EasySeries.Pay.Options;
 
 namespace EasySeries.Pay.Implement;
 
@@ -12,10 +12,9 @@ namespace EasySeries.Pay.Implement;
 /// </summary>
 public class EasyPayAli : IEasyPayAli
 {
-    private const string _ali_PAY_URL = "https://openapi.alipay.com/gateway.do";
+    private const string ALI_PAY_URL = "https://openapi.alipay.com/gateway.do";
 
     private AliPaySecurityOptions _securityOptions;
-
 
     /// <summary>
     /// 初始化.
@@ -39,9 +38,6 @@ public class EasyPayAli : IEasyPayAli
             _securityOptions = securityOptions;
         }
 
-        var privateKey = GetKeyFromFile(_securityOptions.PrivateKeyPath);
-        var publicKey = GetKeyFromFile(_securityOptions.AliPublicKeyPath);
-        var client = new DefaultAopClient(_ali_PAY_URL, _securityOptions.AppId, privateKey, "json", "1.0", "RSA2", publicKey, "UTF-8", false);
         var request = new AlipayTradeWapPayRequest();
         request.SetNotifyUrl(_securityOptions.PayNotifyUrl);
         request.SetReturnUrl(payModel.ReturnUrl);
@@ -53,7 +49,13 @@ public class EasyPayAli : IEasyPayAli
                 { "product_code", payModel.ProductCode}
             };
         request.BizContent = JsonConvert.SerializeObject(bizContent);
-        return client.pageExecute(request);
+
+        return _securityOptions.SecurityType switch
+        {
+            "KEY" => CreatKEYAopClient().pageExecute(request),
+            "CERT" => CreateCERTAopClient().pageExecute(request),
+            _ => throw new ArgumentException("安全类型错误,应为KEY/CERT")
+        };
     }
 
     /// <summary>
@@ -69,16 +71,19 @@ public class EasyPayAli : IEasyPayAli
             _securityOptions = securityOptions;
         }
 
-        var privateKey = GetKeyFromFile(_securityOptions.PrivateKeyPath);
-        var publicKey = GetKeyFromFile(_securityOptions.AliPublicKeyPath);
-        var client = new DefaultAopClient(_ali_PAY_URL, _securityOptions.AppId, privateKey, "json", "1.0", "RSA2", publicKey, "UTF-8", false);
         var request = new AlipayTradeQueryRequest();
         var bizContent = new Dictionary<string, object>
             {
                 { "out_trade_no", outTradeNo }
             };
         request.BizContent = JsonConvert.SerializeObject(bizContent);
-        return client.Execute(request);
+
+        return _securityOptions.SecurityType switch
+        {
+            "KEY" => CreatKEYAopClient().Execute(request),
+            "CERT" => CreateCERTAopClient().CertificateExecute(request),
+            _ => throw new ArgumentException("安全类型错误,应为KEY/CERT")
+        };
     }
 
     /// <summary>
@@ -94,9 +99,6 @@ public class EasyPayAli : IEasyPayAli
             _securityOptions = securityOptions;
         }
 
-        var privateKey = GetKeyFromFile(_securityOptions.PrivateKeyPath);
-        var publicKey = GetKeyFromFile(_securityOptions.AliPublicKeyPath);
-        var client = new DefaultAopClient(_ali_PAY_URL, _securityOptions.AppId, privateKey, "json", "1.0", "RSA2", publicKey, "UTF-8", false);
         var request = new AlipayTradeRefundRequest();
         var bizContent = new Dictionary<string, object>
             {
@@ -106,7 +108,13 @@ public class EasyPayAli : IEasyPayAli
                 { "refund_reason", refundModel.Reason }
             };
         request.BizContent = JsonConvert.SerializeObject(bizContent);
-        return client.Execute(request);
+
+        return _securityOptions.SecurityType switch
+        {
+            "KEY" => CreatKEYAopClient().Execute(request),
+            "CERT" => CreateCERTAopClient().CertificateExecute(request),
+            _ => throw new ArgumentException("安全类型错误,应为KEY/CERT")
+        };
     }
 
     /// <summary>
@@ -122,21 +130,23 @@ public class EasyPayAli : IEasyPayAli
             _securityOptions = securityOptions;
         }
 
-        var privateKey = GetKeyFromFile(_securityOptions.PrivateKeyPath);
-        var publicKey = GetKeyFromFile(_securityOptions.AliPublicKeyPath);
-        var client = new DefaultAopClient(_ali_PAY_URL, _securityOptions.AppId, privateKey, "json", "1.0", "RSA2", publicKey, "UTF-8", false);
         var request = new AlipayTradeCloseRequest();
         var bizContent = new Dictionary<string, object>
             {
                 { "out_trade_no", outTradeNO }
             };
         request.BizContent = JsonConvert.SerializeObject(bizContent);
-        return client.Execute(request);
+
+        return _securityOptions.SecurityType switch
+        {
+            "KEY" => CreatKEYAopClient().Execute(request),
+            "CERT" => CreateCERTAopClient().CertificateExecute(request),
+            _ => throw new ArgumentException("安全类型错误,应为KEY/CERT")
+        };
     }
 
     /// <summary>
-    /// 回调通知处理.
-    /// 回应:await Response.WriteAsync("success/fail");
+    /// 回调通知处理. 回应:await Response.WriteAsync("success/fail");
     /// </summary>
     /// <param name="request">回调通知请求.</param>
     /// <param name="securityOptions">支付安全信息(即时模式用).</param>
@@ -160,10 +170,13 @@ public class EasyPayAli : IEasyPayAli
             throw new Exception("fail");
         }
 
-        bool verify = AliVerifySign(requestDic, _securityOptions.AliPublicKeyPath);
-        if(!verify)
+        if(_securityOptions.IsVerifySign)
         {
-            throw new Exception("fail");
+            bool verify = AliVerifySign(requestDic);
+            if(!verify)
+            {
+                throw new Exception("fail");
+            }
         }
 
         return new NofityModel
@@ -179,14 +192,22 @@ public class EasyPayAli : IEasyPayAli
     /// 验签.
     /// </summary>
     /// <param name="signarr">签名串.</param>
-    /// <param name="aliPublicKeyPath">公钥文件路径.</param>
     /// <returns>验签结果.</returns>
-    private static bool AliVerifySign(Dictionary<string, string> signarr, string aliPublicKeyPath)
+    private bool AliVerifySign(Dictionary<string, string> signarr)
     {
-        using var fileStream = File.OpenRead(aliPublicKeyPath);
-        var reader = new StreamReader(fileStream);
-        var publicKey = reader.ReadToEnd();
-        return AlipaySignature.RSACheckV1(signarr, publicKey, "UTF-8", "RSA2", false);
+        if(_securityOptions.SecurityType == "KEY")
+        {
+            var publicKey = GetKeyFromFile(_securityOptions.AliPublicKeyPath);
+            return AlipaySignature.RSACheckV1(signarr, publicKey, "UTF-8", "RSA2", false);
+        }
+
+        if(_securityOptions.SecurityType == "CERT")
+        {
+
+            return AlipaySignature.RSACertCheckV1(signarr, _securityOptions.AliPublicCertPath, "UTF-8", "RSA2");
+        }
+
+        throw new ArgumentException("安全类型错误,应为KEY/CERT");
     }
 
     /// <summary>
@@ -204,5 +225,32 @@ public class EasyPayAli : IEasyPayAli
         using var fileStream = new FileStream(filePath, FileMode.Open);
         using var reader = new StreamReader(fileStream);
         return reader.ReadToEnd();
+    }
+
+    //创建AopClient.
+    private DefaultAopClient CreatKEYAopClient()
+    {
+        var privateKey = GetKeyFromFile(_securityOptions.PrivateKeyPath);
+        var publicKey = GetKeyFromFile(_securityOptions.AliPublicKeyPath);
+        return new DefaultAopClient(ALI_PAY_URL, _securityOptions.AppId, privateKey, "json", "1.0", "RSA2", publicKey, "UTF-8", false);
+    }
+
+    //创建AopClient.
+    private DefaultAopClient CreateCERTAopClient()
+    {
+        var privateKey = GetKeyFromFile(_securityOptions.PrivateKeyPath);
+        var alipayConfig = new AlipayConfig
+        {
+            ServerUrl = ALI_PAY_URL,
+            AppId = _securityOptions.AppId,
+            PrivateKey = privateKey,
+            Format = "json",
+            SignType = "RSA2",
+            Charset = "UTF-8",
+            AlipayPublicCertPath = _securityOptions.AliPublicCertPath,
+            AppCertPath = _securityOptions.AliAppPublicCertPath,
+            RootCertPath = _securityOptions.AliRootCertPath
+        };
+        return new DefaultAopClient(alipayConfig);
     }
 }

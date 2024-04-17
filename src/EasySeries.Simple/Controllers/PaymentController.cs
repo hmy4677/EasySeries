@@ -1,5 +1,6 @@
 ﻿using Aop.Api.Response;
 using EasySeries.Pay;
+using EasySeries.Pay.Models.Ali;
 using EasySeries.Pay.Models.Wechat;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -51,10 +52,22 @@ public class PaymentController : ControllerBase
         return await _easyPayWechat.WechatQueryRefundAsync(outRefundNO);
     }
 
-    [HttpGet("ali")]
+    [HttpPost("ali/wap")]
+    public AlipayTradeWapPayResponse QueryAli([FromBody] AliPayModel model)
+    {
+        return _easyPayAli.AlipayWap(model);
+    }
+
+    [HttpGet("ali/query")]
     public AlipayTradeQueryResponse QueryAli(string outTradeNo)
     {
         return _easyPayAli.AlipayQuery(outTradeNo);
+    }
+
+    [HttpPost("ali/refund")]
+    public AlipayTradeRefundResponse RefundAli([FromBody] AliPayRefundModel model)
+    {
+        return _easyPayAli.AlipayRefund(model);
     }
 
     [HttpPost("wechat_callback")]
