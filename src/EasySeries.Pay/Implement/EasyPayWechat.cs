@@ -435,17 +435,13 @@ public class EasyPayWechat : IEasyPayWechat
             throw new ArgumentException("微信私钥证书文件不存在");
         }
 
-        using var fileStream = new FileStream(_securityOptions.PrivateKeyPath, FileMode.Open);
-        using var reader = new StreamReader(fileStream);
-        var privateKey = reader.ReadToEnd()
-            .Replace("-----BEGIN PRIVATE KEY-----", string.Empty)
-            .Replace("-----END PRIVATE KEY-----", string.Empty)
-            .Trim();
+        var keyText = File.ReadAllText(_securityOptions.PrivateKeyPath);
+        keyText = keyText.Replace("-----BEGIN PRIVATE KEY-----", string.Empty).Replace("-----END PRIVATE KEY-----", string.Empty).Trim();
+        var keyBuffer = Convert.FromBase64String(keyText);
 
-        var keyData = Convert.FromBase64String(privateKey);
-        var rsa = RSA.Create();
-        rsa.ImportPkcs8PrivateKey(keyData, out _);
-        var signStrdata = Encoding.UTF8.GetBytes(signStr);
-        return Convert.ToBase64String(rsa.SignData(signStrdata, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1));
+        using RSA rsa = RSA.Create();
+        rsa.ImportPkcs8PrivateKey(keyBuffer, out _);
+        var signBuffer = Encoding.UTF8.GetBytes(signStr);
+        return Convert.ToBase64String(rsa.SignData(signBuffer, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1));
     }
 }

@@ -222,9 +222,7 @@ public class EasyPayAli : IEasyPayAli
             throw new Exception("密钥文件不存在");
         }
 
-        using var fileStream = new FileStream(filePath, FileMode.Open);
-        using var reader = new StreamReader(fileStream);
-        return reader.ReadToEnd();
+        return File.ReadAllText(filePath);
     }
 
     //创建AopClient.
