@@ -6,9 +6,8 @@
 public class PaySecurityOptions
 {
     /// <summary>
-    /// 应用id(微信JSAPI,支付宝WAP).
+    /// 应用id(微信小程序,支付宝WAP).
     /// </summary>
-    [Required]
     public string AppId { get; set; } = string.Empty;
 
     /// <summary>

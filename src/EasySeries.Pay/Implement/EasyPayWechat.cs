@@ -1,4 +1,5 @@
-﻿using EasySeries.Pay.Models.Wechat;
+﻿using EasySeries.Pay.Enums;
+using EasySeries.Pay.Models.Wechat;
 using EasySeries.Pay.Options;
 using Org.BouncyCastle.Crypto.Engines;
 using Org.BouncyCastle.Crypto.Modes;
@@ -32,7 +33,7 @@ public class EasyPayWechat : IEasyPayWechat
     /// <param name="payModel">支付信息model.</param>
     /// <param name="securityOptions">支付安全(即时模式用).</param>
     /// <returns>预付订单号.</returns>
-    public async Task<string> WechatPrepayAsync(PayModel payModel, WechatPaySecurityOptions? securityOptions = null)
+    public async Task<string> WechatPrepayAsync(JSAPIPayModel payModel, WechatPaySecurityOptions? securityOptions = null)
     {
         if(securityOptions != null)
         {
@@ -42,7 +43,7 @@ public class EasyPayWechat : IEasyPayWechat
         const string API_URL = "https://api.mch.weixin.qq.com/v3/pay/transactions/jsapi";
         var requestBody = new PrepayRequest
         {
-            AppId = _securityOptions.AppId,
+            AppId = payModel.AppIdType == JSAPIAppIdTypes.MiniAppId ? _securityOptions.AppId : _securityOptions.CommonAppId,
             Mchid = _securityOptions.MchId,
             NotifyUrl = _securityOptions.PayNotifyUrl,
 

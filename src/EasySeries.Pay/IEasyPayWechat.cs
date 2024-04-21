@@ -14,7 +14,7 @@ public interface IEasyPayWechat
     /// <param name="payModel">支付信息model.</param>
     /// <param name="securityOptions">支付安全(即时模式用).</param>
     /// <returns>预付订单号.</returns>
-    Task<string> WechatPrepayAsync(PayModel payModel, WechatPaySecurityOptions? securityOptions = null);
+    Task<string> WechatPrepayAsync(JSAPIPayModel payModel, WechatPaySecurityOptions? securityOptions = null);
 
     /// <summary>
     /// 生成预付订单(APP).

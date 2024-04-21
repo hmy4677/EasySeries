@@ -11,6 +11,11 @@ public class WechatPaySecurityOptions : PaySecurityOptions
     public static readonly string SettingKey = "WechatPaySecurityOptions";
 
     /// <summary>
+    /// 公众号应用Id.
+    /// </summary>
+    public string CommonAppId { get; set; } = string.Empty;
+
+    /// <summary>
     /// 微信商户号id.
     /// </summary>
     [Required]

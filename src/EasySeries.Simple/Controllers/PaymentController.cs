@@ -1,5 +1,6 @@
 ﻿using Aop.Api.Response;
 using EasySeries.Pay;
+using EasySeries.Pay.Enums;
 using EasySeries.Pay.Models.Ali;
 using EasySeries.Pay.Models.Wechat;
 using Microsoft.AspNetCore.Mvc;
@@ -27,7 +28,7 @@ public class PaymentController : ControllerBase
     }
 
     [HttpPost("wechat/jsapi")]
-    public async Task<MiniAppSignInfo> WechatPayAsync([FromBody] PayModel pay)
+    public async Task<MiniAppSignInfo> WechatPayAsync([FromBody] JSAPIPayModel pay)
     {
         var prepayId = await _easyPayWechat.WechatPrepayAsync(pay);
         return _easyPayWechat.MiniAppSign(prepayId);
