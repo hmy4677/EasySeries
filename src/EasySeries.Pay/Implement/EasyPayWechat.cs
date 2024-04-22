@@ -193,25 +193,26 @@ public class EasyPayWechat : IEasyPayWechat
     }
 
     /// <summary>
-    /// 小程序支付签名.
+    /// JSAPI签名.
     /// </summary>
     /// <param name="prepayid">预付订单id.</param>
+    /// <param name="appIdType">appId类型.</param>
     /// <param name="securityOptions">支付安全(即时模式用).</param>
-    /// <returns>小程序支付签名包.</returns>
-    public MiniAppSignInfo MiniAppSign(string prepayid, WechatPaySecurityOptions? securityOptions = null)
+    /// <returns>JSAPI签名信息.</returns>
+    public JSAPISignInfo JSAPISign(string prepayid, JSAPIAppIdTypes appIdType, WechatPaySecurityOptions? securityOptions = null)
     {
         if(securityOptions != null)
         {
             _securityOptions = securityOptions;
         }
 
-        var appId = _securityOptions.AppId;
+        var appId = appIdType == JSAPIAppIdTypes.MiniAppId ? _securityOptions.AppId : _securityOptions.CommonAppId;
         var timeStamp = (int)DateTimeOffset.UtcNow.ToUnixTimeSeconds();
         var nonceStr = Path.GetRandomFileName();
         var package = $"prepay_id={prepayid}";
         var signStr = $"{appId}\n{timeStamp}\n{nonceStr}\n{package}\n";
         var paySign = SHA256WithRSASign(signStr);
-        return new MiniAppSignInfo
+        return new JSAPISignInfo
         {
             AppId = appId,
             NonceStr = nonceStr,
