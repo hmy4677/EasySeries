@@ -168,12 +168,13 @@ public interface IEasyPayWechat
     Task<RefundNotify> WechatRefundNotifyHandleAsync(HttpRequest request, WechatPaySecurityOptions? securityOptions = null);
 
     /// <summary>
-    /// 小程序支付签名.
+    /// JSAPI签名.
     /// </summary>
     /// <param name="prepayid">预付订单id.</param>
+    /// <param name="appIdType">appId类型.</param>
     /// <param name="securityOptions">支付安全(即时模式用).</param>
-    /// <returns>小程序支付签名包.</returns>
-    MiniAppSignInfo MiniAppSign(string prepayid, WechatPaySecurityOptions? securityOptions = null);
+    /// <returns>JSAPI签名信息.</returns>
+    JSAPISignInfo JSAPISign(string prepayid, JSAPIAppIdTypes appIdType, WechatPaySecurityOptions? securityOptions = null);
 
     /// <summary>
     /// APP支付签名.
