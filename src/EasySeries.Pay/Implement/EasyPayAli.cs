@@ -179,11 +179,12 @@ public class EasyPayAli : IEasyPayAli
             }
         }
 
+        var isParse = decimal.TryParse(requestDic["total_amount"], out decimal totalAmout);
         return new NofityModel
         {
             OutTradeNo = requestDic["out_trade_no"],
-            TotalAmount = requestDic["trade_no"],
-            TradeNo = requestDic["total_amount"],
+            TotalAmount = isParse ? totalAmout : 0,
+            TradeNo = requestDic["trade_no"],
             TradeStatus = requestDic["trade_status"]
         };
     }

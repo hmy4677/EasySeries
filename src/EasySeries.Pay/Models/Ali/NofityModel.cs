@@ -18,7 +18,7 @@ public class NofityModel
     /// <summary>
     /// 总金额.
     /// </summary>
-    public string TotalAmount { get; set; } = string.Empty;
+    public decimal TotalAmount { get; set; }
 
     /// <summary>
     /// 支付状态.
