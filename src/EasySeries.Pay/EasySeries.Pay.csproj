@@ -5,11 +5,11 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-		<Version>3.4.3</Version>
+		<Version>4.0.1</Version>
 		<Authors>何明钰(hmy4677)</Authors>
 		<Product>Easy系列-支付</Product>
 		<Title>EasySeries.Pay</Title>
-		<Description>微信支付,支付宝支付;配置模式,实时模式.</Description>
+		<Description>微信支付,支付宝支付,中信全付通;配置模式,实时模式.</Description>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
@@ -17,7 +17,7 @@
 		<PackageProjectUrl>https://github.com/hmy4677/EasySeries</PackageProjectUrl>
 		<RepositoryUrl>https://github.com/hmy4677/EasySeries</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
-		<PackageTags>pay;payment;wechatPay;aliPay;微信支付;支付宝支付;微信;支付宝</PackageTags>
+		<PackageTags>pay;payment;wechatPay;aliPay;CiticBank;UnifyTrade;微信支付;支付宝支付;中信全付通;微信;支付宝;中信银行;全付通</PackageTags>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -35,6 +35,8 @@
 		<PackageReference Include="Microsoft.Extensions.Options" Version="7.0.1" />
 		<PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="7.0.0" />
 		<PackageReference Include="RestSharp" Version="110.2.0" />
+		<PackageReference Include="System.Text.Encoding" Version="4.3.0" />
+		<PackageReference Include="System.Text.Encoding.CodePages" Version="6.0.0" />
 	</ItemGroup>
 
 	<ItemGroup>

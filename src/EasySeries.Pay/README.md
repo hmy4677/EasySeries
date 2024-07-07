@@ -1,6 +1,6 @@
 ## EasySeries.Pay
 
-Easy支付，Easy系列的首个应用，用于微信支付，阿里支付。
+Easy支付，Easy系列的首个应用，用于微信支付，阿里支付, 中信全付通。
 
 ### 使用说明:
 
@@ -30,6 +30,14 @@ Easy支付，Easy系列的首个应用，用于微信支付，阿里支付。
     "PrivateKeyPath": "xx/xx.pem", //私钥文件路径.
     "PayNotifyUrl": "https://xxx.xx", //支付回调通知url(必要).
     "RefundNotifyUrl": "https://xxx.xx" //退款回调通知url(必要).
+  },
+  "UnifyTradeSecurityOptions": {
+    "IsVerifySign": true, //返回结果是否验签.
+    "CerFilePath": "D:\\IIS\\cert\\zx_cert\\中信生产公钥.cer",
+    "KeyFilePath": "D:\\IIS\\cert\\zx_cert\\private_key.txt", //需要用提供的java先解密保存txt再用.
+    "MchId": "xxx", //商户号.
+    "SubAppId": "", //微信小程序id,需要绑定.
+    "NotifyUrl": "" //回调通知url.
   }
 ```
 

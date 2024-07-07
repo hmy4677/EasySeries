@@ -204,7 +204,6 @@ public class EasyPayAli : IEasyPayAli
 
         if(_securityOptions.SecurityType == "CERT")
         {
-
             return AlipaySignature.RSACertCheckV1(signarr, _securityOptions.AliPublicCertPath, "UTF-8", "RSA2");
         }
 

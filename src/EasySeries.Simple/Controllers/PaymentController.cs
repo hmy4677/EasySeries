@@ -1,7 +1,7 @@
 ﻿using Aop.Api.Response;
 using EasySeries.Pay;
-using EasySeries.Pay.Enums;
 using EasySeries.Pay.Models.Ali;
+using EasySeries.Pay.Models.UnifyTrade;
 using EasySeries.Pay.Models.Wechat;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -14,11 +14,13 @@ public class PaymentController : ControllerBase
 {
     private readonly IEasyPayWechat _easyPayWechat;
     private readonly IEasyPayAli _easyPayAli;
+    private readonly IEasyPayUnifyTrade _easyPayUnifyTrade;
 
-    public PaymentController(IEasyPayWechat easyPayWechat, IEasyPayAli easyPayAli)
+    public PaymentController(IEasyPayWechat easyPayWechat, IEasyPayAli easyPayAli, IEasyPayUnifyTrade easyPayUnifyTrade)
     {
         _easyPayWechat = easyPayWechat;
         _easyPayAli = easyPayAli;
+        _easyPayUnifyTrade = easyPayUnifyTrade;
     }
 
     [HttpGet("wechat")]
@@ -53,6 +55,25 @@ public class PaymentController : ControllerBase
         return await _easyPayWechat.WechatQueryRefundAsync(outRefundNO);
     }
 
+    [HttpPost("wechat_callback")]
+    public async Task<IActionResult> WechatCallbackAsync()
+    {
+        try
+        {
+            await _easyPayWechat.WechatNotifyHandleAsync(Request);
+            return Ok();
+        }
+        catch(Exception ex)
+        {
+            var res = new
+            {
+                code = "FAIL",
+                message = ex.Message
+            };
+            return BadRequest(JsonConvert.SerializeObject(res));
+        }
+    }
+
     [HttpPost("ali/wap")]
     public AlipayTradeWapPayResponse QueryAli([FromBody] AliPayModel model)
     {
@@ -71,22 +92,9 @@ public class PaymentController : ControllerBase
         return _easyPayAli.AlipayRefund(model);
     }
 
-    [HttpPost("wechat_callback")]
-    public async Task<IActionResult> WechatCallbackAsync()
+    [HttpGet("unify")]
+    public async Task<UnifyTradeQueryResponse> UnifyQueryAsync(string ourTradeNo)
     {
-        try
-        {
-            await _easyPayWechat.WechatNotifyHandleAsync(Request);
-            return Ok();
-        }
-        catch(Exception ex)
-        {
-            var res = new
-            {
-                code = "FAIL",
-                message = ex.Message
-            };
-            return BadRequest(JsonConvert.SerializeObject(res));
-        }
+        return await _easyPayUnifyTrade.UnifyTradeQueryAsync(ourTradeNo);
     }
 }

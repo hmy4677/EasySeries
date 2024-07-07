@@ -10,9 +10,11 @@ public static class ServiceRegister
     {
         services.AddOptions<AliPaySecurityOptions>().BindConfiguration(AliPaySecurityOptions.SettingKey);
         services.AddOptions<WechatPaySecurityOptions>().BindConfiguration(WechatPaySecurityOptions.SettingKey);
+        services.AddOptions<UnifyTradeSecurityOptions>().BindConfiguration(UnifyTradeSecurityOptions.SettingKey);
 
         services.AddScoped<IEasyPayAli, EasyPayAli>();
         services.AddScoped<IEasyPayWechat, EasyPayWechat>();
+        services.AddScoped<IEasyPayUnifyTrade, EasyPayUnifyTrade>();
 
         return services;
     }
