@@ -17,6 +17,12 @@ Easy邮寄，Easy系列的第二个应用，现支持快递100,京东物流。
     "Customer":"xxx",
     "Key":"xxx",
     "Secret":"xxx"
+  },
+  "SFYJTSecurityOptions": {
+    "SecretKey": "xxx", //密钥.
+    "HospitalCode": "xx", //医院编号.
+    "MonthlyCard": "xxx", //月结账号.
+    "BankCardNo": "xxx" //银行卡号,代收货款用.
   }
 ```
 
@@ -25,10 +31,15 @@ Easy邮寄，Easy系列的第二个应用，现支持快递100,京东物流。
 builder.Services.AddEasyPostService();
 
 //使用
-public YourController(IEasyPostJDL easyPostJDL)
+public PostController(IEasyPostKuaiDi100 easyPostKuaiDi100, IEasyPostJDL easyPostJDL, IEasyPostSF easyPostSF)
 {
-  _easyPostJDL = easyPostJDL;
+    _easyPostKuaiDi100 = easyPostKuaiDi100;
+    _easyPostJDL = easyPostJDL;
+    _easyPostSF = easyPostSF;
 }
+
+
+
 ```
 
 #### 即时配置模式
@@ -38,10 +49,12 @@ public YourController(IEasyPostJDL easyPostJDL)
 builder.Services.AddEasyPostService();
 
 //使用
-public YourController(IEasyPostJDL easyPostJDL)
+public PostController(IEasyPostKuaiDi100 easyPostKuaiDi100, IEasyPostJDL easyPostJDL, IEasyPostSF easyPostSF)
 {
-  _easyPostJDL = easyPostJDL;
-}}
+    _easyPostKuaiDi100 = easyPostKuaiDi100;
+    _easyPostJDL = easyPostJDL;
+    _easyPostSF = easyPostSF;
+}
     
 [HttpGet("JDL")]
 public async Task<dynamic> QueryAsync(string outTradeNo)
@@ -141,6 +154,45 @@ public interface IEasyPostKuaiDi100
     /// <param name="kd100SecurityOptions">快递100安全信息.</param>
     /// <returns>查询结果.</returns>
     Task<KuaidiQueryResponse> Kd100QueryOrderAsync(Kd100OrderQuery query, KuaiDi100SecurityOptions? kd100SecurityOptions = null);
+}
+
+
+/// <summary>
+/// 顺丰Interface.
+/// </summary>
+public interface IEasyPostSF
+{
+    /// <summary>
+    /// 丰医寄通预检订单.
+    /// </summary>
+    /// <param name="request"></param>
+    /// <param name="securityOptions"></param>
+    /// <returns>是否成功.</returns>
+    Task<SFYJTPreCheckResponse> PreOrderAsync(SFYJTPreCheckRequest request, SFYJTSecurityOptions? securityOptions = null);
+
+    /// <summary>
+    /// 顺丰医寄通取消订单.
+    /// </summary>
+    /// <param name="merchantOrderNo">商户单号.</param>
+    /// <param name="securityOptions">顺丰医寄通安全信息.</param>
+    /// <returns>取消响应.</returns>
+    Task<SFYJTCancelResponse> SFYJTCancelAsync(string merchantOrderNo, SFYJTSecurityOptions? securityOptions = null);
+
+    /// <summary>
+    /// 顺丰医寄通创建订单.
+    /// </summary>
+    /// <param name="post"></param>
+    /// <param name="securityOptions">顺丰医寄通安全信息.</param>
+    /// <returns>创建订单响应.</returns>
+    Task<SFYJTOrderResponse> SFYJTCreateOrderAsync(SFYJTPostInfo post, SFYJTSecurityOptions? securityOptions = null);
+
+    /// <summary>
+    /// 顺丰医寄通获取面单打印数据(76*130,不打印logo,默认脱敏项).
+    /// </summary>
+    /// <param name="merchantOrderNo">商户单号.</param>
+    /// <param name="securityOptions">顺丰医寄通安全信息.</param>
+    /// <returns>面单打印数据响应.</returns>
+    Task<SFYJTPrintDataReponse> SFYJTGetPrintDataAsync(string merchantOrderNo, SFYJTSecurityOptions? securityOptions = null);
 }
 
 ```
