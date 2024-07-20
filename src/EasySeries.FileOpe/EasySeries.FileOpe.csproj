@@ -5,6 +5,14 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <PlatformTarget>AnyCPU</PlatformTarget>
+        <Title>EasySeries.FileOpe</Title>
+        <Authors>何明钰(hmy4677)</Authors>
+        <Description>文件操作,PDF打印,视频截图,缩略图.</Description>
+        <PackageProjectUrl>https://github.com/hmy4677/EasySeries</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/hmy4677/EasySeries</RepositoryUrl>
+        <RepositoryType>git</RepositoryType>
+        <PackageTags>File;Operation;PDF;Print;Video;Snipping;Thumbnail;文件操作;PDF;打印;视频截图;缩略图</PackageTags>
+        <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     </PropertyGroup>
 
     <ItemGroup>
