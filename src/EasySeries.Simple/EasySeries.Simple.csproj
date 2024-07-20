@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>48518edf-c8a1-4bb2-9fe6-c4f0e4f0154c</UserSecretsId>
@@ -12,6 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\EasySeries.FileOpe\EasySeries.FileOpe.csproj" />
     <ProjectReference Include="..\EasySeries.Pay\EasySeries.Pay.csproj" />
     <ProjectReference Include="..\EasySeries.Post\EasySeries.Post.csproj" />
   </ItemGroup>

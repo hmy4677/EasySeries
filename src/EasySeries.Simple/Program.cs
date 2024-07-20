@@ -2,7 +2,6 @@ using EasySeries.Pay.AspNetCore;
 using EasySeries.Post.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
-
 // Add services to the container.
 
 builder.Services.AddControllers();
