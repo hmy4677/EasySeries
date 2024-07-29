@@ -8,7 +8,7 @@ Easy支付，Easy系列的首个应用，用于微信支付，阿里支付, 中�
 ```json
 //appsettings.json
   "AliPaySecurityOptions": {
-    "AppId": "xxx", //支付宝WAP 应用id(现只支持wap).
+    "AppId": "xxx", //应用id,app与wap同id.
     "PrivateKeyPath": "xx/xx.txt", //私钥文件路径(安全类型为KEY时必要).
     "AliPublicKeyPath": "xx/xx.txt", //阿里公钥文件路径(安全类型为KEY时必要).
     "PayNotifyUrl": "https://xx/api/xxx" //支付回调通知url(必要).
@@ -263,6 +263,14 @@ public interface IEasyPayAli
     /// <param name="securityOptions">支付安全(即时模式用).</param>
     /// <returns>支付响应结果.</returns>
     AlipayTradeWapPayResponse AlipayWap(AliPayModel payModel, AliPaySecurityOptions? securityOptions = null);
+
+    /// <summary>
+    /// 支付(移动APP).
+    /// </summary>
+    /// <param name="payModel">支付model.</param>
+    /// <param name="securityOptions">支付安全信息(即时模式用).</param>
+    /// <returns>支付响应结果.</returns>
+    AlipayTradeAppPayResponse AlipayApp(AliPayModel payModel, AliPaySecurityOptions? securityOptions = null);
 }
 
 /// <summary>

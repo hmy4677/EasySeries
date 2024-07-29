@@ -10,6 +10,14 @@ namespace EasySeries.Pay;
 public interface IEasyPayAli
 {
     /// <summary>
+    /// 支付(移动APP).
+    /// </summary>
+    /// <param name="payModel">支付model.</param>
+    /// <param name="securityOptions">支付安全信息(即时模式用).</param>
+    /// <returns>支付响应结果.</returns>
+    AlipayTradeAppPayResponse AlipayApp(AliPayModel payModel, AliPaySecurityOptions? securityOptions = null);
+
+    /// <summary>
     /// 关闭订单.
     /// </summary>
     /// <param name="outTradeNO">商户单号.</param>

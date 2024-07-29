@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace EasySeries.Pay.Models.Ali;
+﻿namespace EasySeries.Pay.Models.Ali;
 
 /// <summary>
 /// 阿里支付model
@@ -25,13 +23,7 @@ public class AliPayModel
     public string Subject { get; set; } = string.Empty;
 
     /// <summary>
-    /// 返回Url.
+    /// 返回Url(用于wap支付时).
     /// </summary>
-    [Required]
     public string ReturnUrl { get; set; } = string.Empty;
-
-    /// <summary>
-    /// 支付方式(默认手机wap).
-    /// </summary>
-    public string ProductCode { get; set; } = "QUICK_WAP_WAY";
 }

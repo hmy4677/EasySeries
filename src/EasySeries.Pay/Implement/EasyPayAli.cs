@@ -46,7 +46,7 @@ public class EasyPayAli : IEasyPayAli
                 { "out_trade_no", payModel.OutTradeNo },
                 { "total_amount", payModel.Amount },
                 { "subject", payModel.Subject },
-                { "product_code", payModel.ProductCode}
+                { "product_code", "QUICK_WAP_WAY"}
             };
         request.BizContent = JsonConvert.SerializeObject(bizContent);
 
@@ -54,6 +54,39 @@ public class EasyPayAli : IEasyPayAli
         {
             "KEY" => CreatKEYAopClient().pageExecute(request),
             "CERT" => CreateCERTAopClient().pageExecute(request),
+            _ => throw new ArgumentException("安全类型错误,应为KEY/CERT")
+        };
+    }
+
+    /// <summary>
+    /// 支付(移动APP).
+    /// </summary>
+    /// <param name="payModel">支付model.</param>
+    /// <param name="securityOptions">支付安全信息(即时模式用).</param>
+    /// <returns>支付响应结果.</returns>
+    public AlipayTradeAppPayResponse AlipayApp(AliPayModel payModel, AliPaySecurityOptions? securityOptions = null)
+    {
+        if(securityOptions != null)
+        {
+            _securityOptions = securityOptions;
+        }
+
+        var request = new AlipayTradeAppPayRequest();
+        request.SetNotifyUrl(_securityOptions.PayNotifyUrl);
+
+        var bizContent = new Dictionary<string, object>
+            {
+                { "out_trade_no", payModel.OutTradeNo },
+                { "total_amount", payModel.Amount },
+                { "subject", payModel.Subject },
+                { "product_code", "QUICK_MSECURITY_PAY"}
+            };
+        request.BizContent = JsonConvert.SerializeObject(bizContent);
+
+        return _securityOptions.SecurityType switch
+        {
+            "KEY" => CreatKEYAopClient().SdkExecute(request),
+            "CERT" => CreateCERTAopClient().SdkExecute(request),
             _ => throw new ArgumentException("安全类型错误,应为KEY/CERT")
         };
     }

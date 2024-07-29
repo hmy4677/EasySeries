@@ -74,20 +74,26 @@ public class PaymentController : ControllerBase
         }
     }
 
+    [HttpPost("ali/app")]
+    public AlipayTradeAppPayResponse AliPayApp([FromBody] AliPayModel model)
+    {
+        return _easyPayAli.AlipayApp(model);
+    }
+
     [HttpPost("ali/wap")]
-    public AlipayTradeWapPayResponse QueryAli([FromBody] AliPayModel model)
+    public AlipayTradeWapPayResponse AliPayWap([FromBody] AliPayModel model)
     {
         return _easyPayAli.AlipayWap(model);
     }
 
     [HttpGet("ali/query")]
-    public AlipayTradeQueryResponse QueryAli(string outTradeNo)
+    public AlipayTradeQueryResponse AliPayQuery(string outTradeNo)
     {
         return _easyPayAli.AlipayQuery(outTradeNo);
     }
 
     [HttpPost("ali/refund")]
-    public AlipayTradeRefundResponse RefundAli([FromBody] AliPayRefundModel model)
+    public AlipayTradeRefundResponse AliPayRefund([FromBody] AliPayRefundModel model)
     {
         return _easyPayAli.AlipayRefund(model);
     }
