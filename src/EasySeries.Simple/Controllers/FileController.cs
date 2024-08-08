@@ -1,6 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using EasySeries.FileOpe.Models;
 using EasySeries.FileOpe;
-
+using Microsoft.AspNetCore.Mvc;
 namespace EasySeries.Simple.Controllers;
 
 public class FileController : Controller
@@ -8,13 +8,13 @@ public class FileController : Controller
     [HttpGet("file")]
     public async Task<FileContentResult> DownFileAsync(string filePath)
     {
-        var fileBuffer = await FileOpe.FileOpe.GetFileBufferAsync(filePath);
+        var fileBuffer = await EasyFile.GetFileBufferAsync(filePath);
         return File(fileBuffer.Buffer, fileBuffer.MIME, fileBuffer.FileName);
     }
 
     [HttpGet("printers")]
-    public void GetPrinterList()
+    public List<PrinterInfo> GetPrinterList()
     {
-        var list = FileOpe.FileOpe.GetPrinterList();
+        return EasyFile.GetPrinterList();
     }
 }

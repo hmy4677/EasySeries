@@ -69,15 +69,15 @@ public class SFYJTCreateOrderRequest
     /// 设置代收金额.
     /// </summary>
     /// <param name="money"></param>
-    /// <param name="bankCardNo"></param>
-    public void SetCollectionMoney(decimal? money, string bankCardNo)
+    /// <param name="monthlyCard"></param>
+    public void SetCollectionMoney(decimal? money, string monthlyCard)
     {
-        if(money is not null and > 0)
+        if(money is > 0)
         {
             Service = new ServiceInfo
             {
                 CollectionMoney = (int)(money * 100),
-                CollectionNo = bankCardNo
+                CollectionNo = monthlyCard
             };
         }
     }
@@ -197,7 +197,7 @@ public class ServiceInfo
     public int CollectionMoney { get; set; }
 
     /// <summary>
-    /// 代收货款银行卡.
+    /// 代收货款月结卡.
     /// </summary>
     [JsonProperty("collectionNo")]
     public string CollectionNo { get; set; } = string.Empty;

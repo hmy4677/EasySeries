@@ -10,16 +10,16 @@ using Image = System.Drawing.Image;
 namespace EasySeries.FileOpe;
 
 /// <summary>
-///     文件操作.
+///  文件操作.
 /// </summary>
-public static class FileOpe
+public static class EasyFile
 {
     private static string _pdfPath = string.Empty;
     private static int _weight;
     private static int _height;
 
     /// <summary>
-    ///     保存文件至目标文件夹.
+    /// 保存文件至目标文件夹.
     /// </summary>
     /// <param name="stream">文件流.</param>
     /// <param name="directory">目标文件夹.</param>
@@ -28,7 +28,7 @@ public static class FileOpe
     /// <exception cref="FileLoadException"></exception>
     public static async Task<string> SaveFileAsync(Stream stream, string directory, string fileName, string[]? allows = default)
     {
-        if(allows is {Length: > 0} && !allows.Contains(Path.GetExtension(fileName))) throw new FileLoadException("不允许的文件类型");
+        if(allows is { Length: > 0 } && !allows.Contains(Path.GetExtension(fileName))) throw new FileLoadException("不允许的文件类型");
 
         if(!Directory.Exists(directory)) Directory.CreateDirectory(directory);
 
@@ -41,7 +41,7 @@ public static class FileOpe
     }
 
     /// <summary>
-    ///     获取文件Buffer.
+    /// 获取文件Buffer.
     /// </summary>
     /// <param name="filePath">文件路径.</param>
     /// <returns>文件二进制,MIME类型.</returns>
@@ -54,7 +54,7 @@ public static class FileOpe
     }
 
     /// <summary>
-    ///     获取文件Stream.
+    /// 获取文件Stream.
     /// </summary>
     /// <param name="filePath">文件路径.</param>
     /// <returns>文件流,MIME类型.</returns>
@@ -67,7 +67,7 @@ public static class FileOpe
     }
 
     /// <summary>
-    ///     远程HTTP下载.
+    /// 远程HTTP下载.
     /// </summary>
     /// <param name="url">文件url.</param>
     /// <param name="headerName">鉴权key(eg:X-Auth-token).</param>
@@ -88,7 +88,7 @@ public static class FileOpe
     }
 
     /// <summary>
-    ///     删除文件.
+    /// 删除文件.
     /// </summary>
     /// <param name="filePath">文件路径.</param>
     public static void Delete(string filePath)
@@ -99,7 +99,7 @@ public static class FileOpe
     }
 
     /// <summary>
-    ///     写txt文件日志.
+    /// 写txt文件日志.
     /// </summary>
     /// <param name="directory">日志目录.</param>
     /// <param name="type">消息类型:INF,ERR...</param>
@@ -119,7 +119,7 @@ public static class FileOpe
     }
 
     /// <summary>
-    ///     MIME.
+    /// MIME.
     /// </summary>
     /// <param name="fileName"></param>
     /// <returns></returns>
@@ -139,7 +139,7 @@ public static class FileOpe
     }
 
     /// <summary>
-    ///     获取本机打印机列表(仅Windows 6.1及以上支持).
+    /// 获取本机打印机列表(仅Windows 6.1及以上支持).
     /// </summary>
     /// <returns>打印机列表.</returns>
     public static List<PrinterInfo> GetPrinterList()
@@ -167,7 +167,7 @@ public static class FileOpe
     }
 
     /// <summary>
-    ///     打印PDF文件(仅Windows 6.1及以上支持).
+    /// 打印PDF文件(仅Windows 6.1及以上支持).
     /// </summary>
     /// <param name="pdfPath">PDF文件路径.</param>
     /// <returns></returns>
@@ -204,7 +204,7 @@ public static class FileOpe
     }
 
     /// <summary>
-    ///     PDF转Image.
+    /// PDF转Image.
     /// </summary>
     /// <param name="filePath">PDF文件路径.</param>
     /// <param name="saveToDirectory">图像保存文件夹-可选.</param>
@@ -229,7 +229,7 @@ public static class FileOpe
     }
 
     /// <summary>
-    ///     打印事件_PDF.
+    /// 打印事件_PDF.
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
@@ -243,7 +243,7 @@ public static class FileOpe
     }
 
     /// <summary>
-    ///     FFmpeg截图命令(需要先安装FFmpeg,并加入环境变量,以供命令调用).
+    /// FFmpeg截图命令(需要先安装FFmpeg,并加入环境变量,以供命令调用).
     /// </summary>
     /// <param name="directory">视频文件夹.</param>
     /// <param name="fileName">视频文件名.</param>
@@ -261,7 +261,7 @@ public static class FileOpe
     }
 
     /// <summary>
-    ///     FFmpeg截图命令(需要先安装FFmpeg,并加入环境变量,以供命令调用).
+    /// FFmpeg截图命令(需要先安装FFmpeg,并加入环境变量,以供命令调用).
     /// </summary>
     /// <param name="directory">视频文件夹.</param>
     /// <param name="fileName">视频文件名.</param>
@@ -285,7 +285,7 @@ public static class FileOpe
     }
 
     /// <summary>
-    ///     缩略图.
+    /// 缩略图.
     /// </summary>
     /// <param name="stream">图片文件stream.</param>
     /// <param name="width">宽度.</param>

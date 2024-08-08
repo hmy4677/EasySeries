@@ -61,7 +61,7 @@ public class EasyPostSF : IEasyPostSF
             MonthlyCard = post.PayMethod == 2 ? null : _securityOptions.MonthlyCard
         };
 
-        body.SetCollectionMoney(post.CollectionMoney, _securityOptions.BankCardNo);
+        body.SetCollectionMoney(post.CollectionMoney, _securityOptions.MonthlyCard);
 
         return await RequestAsync<SFYJTOrderResponse>(body, "open/api/v2/createOrder");
     }
@@ -132,14 +132,14 @@ public class EasyPostSF : IEasyPostSF
         var timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds().ToString();
         var sign = Sign(body, _securityOptions.SecretKey, timestamp);
 
-        var clien = new RestClient(api);
-        var requst = new RestRequest();
-        requst.AddHeader("hospitalCode", _securityOptions.HospitalCode);
-        requst.AddHeader("timestamp", timestamp);
-        requst.AddHeader("sign", sign);
-        requst.AddBody(body, ContentType.Json);
+        var client = new RestClient(api);
+        var request = new RestRequest();
+        request.AddHeader("hospitalCode", _securityOptions.HospitalCode);
+        request.AddHeader("timestamp", timestamp);
+        request.AddHeader("sign", sign);
+        request.AddBody(body, ContentType.Json);
 
-        var response = await clien.PostAsync<T>(requst);
+        var response = await client.PostAsync<T>(request);
         if(response!.Success)
         {
             return response;

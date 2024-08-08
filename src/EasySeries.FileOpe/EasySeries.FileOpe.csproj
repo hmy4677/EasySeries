@@ -12,21 +12,39 @@
         <RepositoryUrl>https://github.com/hmy4677/EasySeries</RepositoryUrl>
         <RepositoryType>git</RepositoryType>
         <PackageTags>File;Operation;PDF;Print;Video;Snipping;Thumbnail;文件操作;PDF;打印;视频截图;缩略图</PackageTags>
-        <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+        <Version>1.1.0</Version>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <Copyright>MIT</Copyright>
+        <PackageLicenseFile>LICENSE</PackageLicenseFile>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="CliWrap" Version="3.6.6"/>
-        <PackageReference Include="RestSharp" Version="111.4.0"/>
-        <PackageReference Include="SixLabors.ImageSharp" Version="3.1.4"/>
-        <PackageReference Include="Syncfusion.PdfToImageConverter.Net" Version="26.1.42"/>
-        <PackageReference Include="System.Drawing.Common" Version="9.0.0-preview.6.24327.6"/>
+      <None Include="..\..\LICENSE">
+        <Pack>True</Pack>
+        <PackagePath>\</PackagePath>
+      </None>
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="CliWrap" Version="3.6.6" />
+        <PackageReference Include="RestSharp" Version="111.4.1" />
+        <PackageReference Include="SixLabors.ImageSharp" Version="3.1.5" />
+        <PackageReference Include="Syncfusion.PdfToImageConverter.Net" Version="26.2.8" />
+        <PackageReference Include="System.Drawing.Common" Version="9.0.0-preview.6.24327.6" />
     </ItemGroup>
 
     <ItemGroup>
         <Reference Include="Microsoft.AspNetCore.Http.Features">
             <HintPath>..\..\..\..\..\..\..\Program Files\dotnet\shared\Microsoft.AspNetCore.App\8.0.5\Microsoft.AspNetCore.Http.Features.dll</HintPath>
         </Reference>
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Update="README.md">
+        <Pack>True</Pack>
+        <PackagePath>\</PackagePath>
+      </None>
     </ItemGroup>
 
 </Project>

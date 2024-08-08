@@ -21,9 +21,4 @@ public class SFYJTSecurityOptions
     /// 月结账号.
     /// </summary>
     public string MonthlyCard { get; set; }
-
-    /// <summary>
-    /// 银行卡号-代收货款用.
-    /// </summary>
-    public string BankCardNo { get; set; }
 }

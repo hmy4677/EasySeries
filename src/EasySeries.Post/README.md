@@ -21,8 +21,7 @@ Easy邮寄，Easy系列的第二个应用，现支持快递100,京东物流。
   "SFYJTSecurityOptions": {
     "SecretKey": "xxx", //密钥.
     "HospitalCode": "xx", //医院编号.
-    "MonthlyCard": "xxx", //月结账号.
-    "BankCardNo": "xxx" //银行卡号,代收货款用.
+    "MonthlyCard": "xxx" //月结账号.
   }
 ```
 
