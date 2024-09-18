@@ -8,11 +8,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.7.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.7.3" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\EasySeries.FileOpe\EasySeries.FileOpe.csproj" />
+    <ProjectReference Include="..\EasySeries.Pay.Static\EasySeries.Pay.Static.csproj" />
     <ProjectReference Include="..\EasySeries.Pay\EasySeries.Pay.csproj" />
     <ProjectReference Include="..\EasySeries.Post\EasySeries.Post.csproj" />
   </ItemGroup>
