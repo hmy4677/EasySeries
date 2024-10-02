@@ -30,18 +30,54 @@ public class PayStaticController : ControllerBase
         return await WechatPay.QueryPayAsync(payConfig, outTradeNo);
     }
 
+    [HttpPost("notify")]
+    public async Task<ActionResult> NotifyAsync()
+    {
+        var reader = new StreamReader(Request.Body);
+        var body = await reader.ReadToEndAsync();
+
+        var config = GetWechatPayConfig();
+        var notify = new WechatNotify
+        {
+            Body = body,
+            IsVerifySign = true,
+            Nonce = Request.Headers["Wechatpay-Nonce"]!,
+            Signature = Request.Headers["Wechatpay-Signature"]!,
+            Stamp = Request.Headers["Wechatpay-Timestamp"]!
+        };
+
+        try
+        {
+            var result = WechatPay.PayNotifyHandel(config, notify);
+            if(result.TradeState == "SUCCESS")
+            {
+
+            }
+        }
+        catch(Exception)
+        {
+            return BadRequest(new
+            {
+                code = "FAIL",
+                messag = "xxx"
+            });
+        }
+
+        return Ok();
+    }
+
     private static WechatPayConfig GetWechatPayConfig()
     {
         return new WechatPayConfig
         {
-            AppId = "wxddc6a0d965a89098",
-            CertSerialNo = "1D45FD09BF2A78D3CCD1363EC878F0215EFD0651",
-            MchId = "1624617346",
-            V3Key = "cheng8duo8xi8nan8er8tong8yi8yuan",
+            AppId = "xxx",
+            CertSerialNo = "xxx",
+            MchId = "xxx",
+            V3Key = "xxx",
             PrivateKeyPath = "D:\\IIS\\cert\\wechatpay\\wuhou\\apiclient_key.pem",
             PlatformCertPath = "D:\\IIS\\cert\\wechatpay\\wuhou\\platform_cert.pem",
-            PayNotifyUrl = "https://api.xnetyy.com/api/PayService/wechat_notify_1",
-            RefundNotifyUrl = "https://api.xnetyy.com/api/PayService/wechat_notify_1"
+            PayNotifyUrl = "https://xxx/api/PayService/wechat_notify_1",
+            RefundNotifyUrl = "https://xxx/api/PayService/wechat_notify_1"
         };
     }
 
