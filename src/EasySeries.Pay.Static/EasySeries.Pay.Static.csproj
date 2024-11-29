@@ -6,7 +6,7 @@
     <TargetFrameworks>net6.0;net8.0</TargetFrameworks>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <Title>EasySeries.Pay.Static</Title>
-    <Version>4.0.0</Version>
+    <Version>4.1.0</Version>
     <Copyright>MIT</Copyright>
     <Description>微信支付,支付宝支付,中信全付通;</Description>
     <PackageProjectUrl>https://github.com/hmy4677/EasySeries</PackageProjectUrl>

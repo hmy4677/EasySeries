@@ -1,4 +1,5 @@
-﻿using EasySeries.Pay.Static.Models.Wechat;
+﻿using Aop.Api.Domain;
+using EasySeries.Pay.Static.Models.Wechat;
 
 namespace EasySeries.Pay.Static;
 
@@ -7,11 +8,11 @@ namespace EasySeries.Pay.Static;
 /// </summary>
 public static class WechatPay
 {
-    private static string _mchId = string.Empty;
-    private static string _certSerialNo = string.Empty;
-    private static string _privateKeyPath = string.Empty;
-    private static string _platformCertPath = string.Empty;
-    private static string _v3Key = string.Empty;
+    //private static string _mchId = string.Empty;
+    //private static string _certSerialNo = string.Empty;
+    //private static string _privateKeyPath = string.Empty;
+    //private static string _platformCertPath = string.Empty;
+    //private static string _v3Key = string.Empty;
 
     /// <summary>
     /// App创建订单.
@@ -22,7 +23,7 @@ public static class WechatPay
     public static async Task<WechatAppSignInfo> AppOrderAsync(WechatPayConfig payConfig, WechatPayInfo payInfo)
     {
         var result = await AppPrepayAsync(payConfig, payInfo);
-        return AppSign(result.PrepayId, payConfig.AppId);
+        return AppSign(payConfig.PrivateKeyPath, payConfig.MchId, payConfig.AppId, result.PrepayId);
     }
 
     /// <summary>
@@ -34,7 +35,7 @@ public static class WechatPay
     public static async Task<WechatJsApiSignInfo> JsApiOrderAsync(WechatPayConfig payConfig, WechatPayInfo payInfo)
     {
         var result = await JsApiPrepayAsync(payConfig, payInfo);
-        return JsApiSign(result.PrepayId, payConfig.AppId);
+        return JsApiSign(payConfig.PrivateKeyPath, payConfig.AppId, result.PrepayId);
     }
 
     /// <summary>
@@ -141,27 +142,17 @@ public static class WechatPay
             SerialNo = p.SerialNo,
             EffectiveTime = p.EffectiveTime,
             ExpireTime = p.ExpireTime,
-            DecryptText = AesGcmDecrypt(p.EncryptCertificate.AssociatedData, p.EncryptCertificate.Nonce, p.EncryptCertificate.Ciphertext)
+            DecryptText = AesGcmDecrypt(payConfig.V3Key, p.EncryptCertificate.AssociatedData, p.EncryptCertificate.Nonce, p.EncryptCertificate.Ciphertext)
         });
     }
 
-    //初始化.
-    private static void InitSecurity(WechatPayConfig config)
-    {
-        _mchId = config.MchId;
-        _certSerialNo = config.CertSerialNo;
-        _privateKeyPath = config.PrivateKeyPath;
-        _platformCertPath = config.PlatformCertPath;
-        _v3Key = config.V3Key;
-    }
-
     //App签名.
-    private static WechatAppSignInfo AppSign(string prepayId, string appId)
+    private static WechatAppSignInfo AppSign(string privateKeyPath, string mchId, string appId, string prepayId)
     {
         var timeStamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString();
         var nonceStr = Path.GetRandomFileName();
         var signStr = $"{appId}\n{timeStamp}\n{nonceStr}\n{prepayId}\n";
-        var paySign = SHA256WithRSASign(signStr);
+        var paySign = SHA256WithRSASign(privateKeyPath, signStr);
         return new WechatAppSignInfo
         {
             Appid = appId,
@@ -170,7 +161,7 @@ public static class WechatPay
             Sign = paySign,
             Timestamp = timeStamp,
             Prepayid = prepayId,
-            Partnerid = _mchId
+            Partnerid = mchId
         };
     }
 
@@ -194,13 +185,13 @@ public static class WechatPay
     }
 
     //JsApi签名.
-    private static WechatJsApiSignInfo JsApiSign(string prepayId, string appId)
+    private static WechatJsApiSignInfo JsApiSign(string privateKeyPath, string appId, string prepayId)
     {
         var timeStamp = (int)DateTimeOffset.UtcNow.ToUnixTimeSeconds();
         var nonceStr = Path.GetRandomFileName();
         var package = $"prepay_id={prepayId}";
         var signStr = $"{appId}\n{timeStamp}\n{nonceStr}\n{package}\n";
-        var paySign = SHA256WithRSASign(signStr);
+        var paySign = SHA256WithRSASign(privateKeyPath, signStr);
 
         return new WechatJsApiSignInfo
         {
@@ -242,7 +233,7 @@ public static class WechatPay
     {
         if(notify.IsVerifySign)
         {
-            var verify = VerifySign(notify.Signature, notify.Stamp, notify.Nonce, notify.Body);
+            var verify = VerifySign(payConfig.PlatformCertPath, notify.Signature, notify.Stamp, notify.Nonce, notify.Body);
             if(!verify)
             {
                 throw new ArgumentException("回调通知处理出错:验签失败");
@@ -251,15 +242,13 @@ public static class WechatPay
 
         var model = JsonConvert.DeserializeObject<NotifyModel>(notify.Body)
                     ?? throw new Exception("回调通知处理出错:Body转化失败");
-        var decrypt = AesGcmDecrypt(model.Resource.AssociatedData, model.Resource.Nonce, model.Resource.Ciphertext);
+        var decrypt = AesGcmDecrypt(payConfig.V3Key, model.Resource.AssociatedData, model.Resource.Nonce, model.Resource.Ciphertext);
         return JsonConvert.DeserializeObject<T>(decrypt);
     }
 
     //执行请求.
     private static async Task<T> ExecuteRequestAsync<T>(WechatPayConfig payConfig, string url, string? requestBodyJson = null)
     {
-        InitSecurity(payConfig);
-
         var client = new RestClient(url);
         var request = new RestRequest();
         var method = "GET";
@@ -271,7 +260,7 @@ public static class WechatPay
         }
 
         var urlTrim = url.Replace("https://api.mch.weixin.qq.com", string.Empty, StringComparison.CurrentCulture).TrimEnd('/');
-        var authorization = BuildAuthorization(method, urlTrim, requestBodyJson);
+        var authorization = BuildAuthorization(payConfig.MchId, payConfig.CertSerialNo, payConfig.PrivateKeyPath, method, urlTrim, requestBodyJson);
         request.AddHeader("Authorization", authorization);
 
         var response = await client.ExecuteAsync(request);
@@ -286,25 +275,25 @@ public static class WechatPay
     }
 
     //构建请求Authorization.
-    private static string BuildAuthorization(string method, string url, string? requestBodyJson = null)
+    private static string BuildAuthorization(string mchId, string certSerialNo, string privateKeyPath, string method, string url, string? requestBodyJson = null)
     {
         var timestamp = (int)DateTimeOffset.UtcNow.ToUnixTimeSeconds();
         var nonce = Path.GetRandomFileName();
         var text = $"{method}\n{url}\n{timestamp}\n{nonce}\n{requestBodyJson ?? string.Empty}\n";
-        var signature = SHA256WithRSASign(text);
+        var signature = SHA256WithRSASign(privateKeyPath, text);
 
-        return $" WECHATPAY2-SHA256-RSA2048 mchid=\"{_mchId}\",nonce_str=\"{nonce}\",signature=\"{signature}\",timestamp=\"{timestamp}\",serial_no=\"{_certSerialNo}\"";
+        return $" WECHATPAY2-SHA256-RSA2048 mchid=\"{mchId}\",nonce_str=\"{nonce}\",signature=\"{signature}\",timestamp=\"{timestamp}\",serial_no=\"{certSerialNo}\"";
     }
 
     //SHA256 With RSA 签名.
-    private static string SHA256WithRSASign(string text)
+    private static string SHA256WithRSASign(string privateKeyPath, string text)
     {
-        if(!File.Exists(_privateKeyPath))
+        if(!File.Exists(privateKeyPath))
         {
             throw new FileNotFoundException("微信私钥文件不存在");
         }
 
-        var keyText = File.ReadAllText(_privateKeyPath);
+        var keyText = File.ReadAllText(privateKeyPath);
         keyText = keyText.Replace("-----BEGIN PRIVATE KEY-----", string.Empty)
                          .Replace("-----END PRIVATE KEY-----", string.Empty)
                          .Trim();
@@ -318,9 +307,9 @@ public static class WechatPay
     }
 
     //验签.
-    private static bool VerifySign(string signature, string stamp, string nonce, string? body)
+    private static bool VerifySign(string platformCertPath, string signature, string stamp, string nonce, string? body)
     {
-        if(!File.Exists(_platformCertPath))
+        if(!File.Exists(platformCertPath))
         {
             throw new FileNotFoundException("微信支付平台公钥证书不存在");
         }
@@ -331,7 +320,7 @@ public static class WechatPay
         //using var rsa = RSA.Create();
         //rsa.ImportRSAPublicKey(publicKey, out _);
 
-        using var cert = new X509Certificate2(_platformCertPath);
+        using var cert = new X509Certificate2(platformCertPath);
         using var rsa = cert.GetRSAPublicKey();
 
         var textBuffer = Encoding.UTF8.GetBytes($"{stamp}\n{nonce}\n{body}\n");
@@ -340,7 +329,7 @@ public static class WechatPay
     }
 
     //解密.
-    private static string AesGcmDecrypt(string associatedData, string nonce, string ciphertext)
+    private static string AesGcmDecrypt(string v3Key, string associatedData, string nonce, string ciphertext)
     {
         if(string.IsNullOrEmpty(associatedData) || string.IsNullOrEmpty(nonce) || string.IsNullOrEmpty(ciphertext))
         {
@@ -349,7 +338,7 @@ public static class WechatPay
 
         var gcmBlockCipher = new GcmBlockCipher(new AesEngine());
         var aeadParameters = new AeadParameters(
-            new KeyParameter(Encoding.UTF8.GetBytes(_v3Key)),
+            new KeyParameter(Encoding.UTF8.GetBytes(v3Key)),
             128,
             Encoding.UTF8.GetBytes(nonce),
             Encoding.UTF8.GetBytes(associatedData));
