@@ -1,5 +1,4 @@
-﻿using Aop.Api.Domain;
-using EasySeries.Pay.Static.Models.Wechat;
+﻿using EasySeries.Pay.Static.Models.Wechat;
 
 namespace EasySeries.Pay.Static;
 

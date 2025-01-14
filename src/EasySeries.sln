@@ -11,7 +11,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EasySeries.Simple", "EasySe
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EasySeries.FileOpe", "EasySeries.FileOpe\EasySeries.FileOpe.csproj", "{CB6E1A2D-FE78-42CB-A48E-4A5C4305C3A7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EasySeries.Pay.Static", "EasySeries.Pay.Static\EasySeries.Pay.Static.csproj", "{772ECDF9-A3EE-429A-A154-3803EB846BA4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EasySeries.Pay.Static", "EasySeries.Pay.Static\EasySeries.Pay.Static.csproj", "{772ECDF9-A3EE-429A-A154-3803EB846BA4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EasySeries.MiniProgram", "EasySeries.MiniProgram\EasySeries.MiniProgram.csproj", "{DAB4147C-BF8A-4491-86C8-6ECFAAA62467}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +41,10 @@ Global
 		{772ECDF9-A3EE-429A-A154-3803EB846BA4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{772ECDF9-A3EE-429A-A154-3803EB846BA4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{772ECDF9-A3EE-429A-A154-3803EB846BA4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DAB4147C-BF8A-4491-86C8-6ECFAAA62467}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DAB4147C-BF8A-4491-86C8-6ECFAAA62467}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DAB4147C-BF8A-4491-86C8-6ECFAAA62467}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DAB4147C-BF8A-4491-86C8-6ECFAAA62467}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

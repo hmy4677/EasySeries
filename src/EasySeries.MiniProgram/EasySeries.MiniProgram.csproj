@@ -1,0 +1,45 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>net6.0;net8.0</TargetFrameworks>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <Version>3.3.0</Version>
+    <Title>EasySeries.MiniProgram</Title>
+    <Authors>何明钰(hmy4677)</Authors>
+    <Product>Easy系列-小程序</Product>
+    <Description>Easy小程序，Easy系列第四个应用，用于微信，抖音，快手，百度等小程序。</Description>
+    <Copyright>MIT</Copyright>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageProjectUrl>https://github.com/hmy4677/EasySeries</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/hmy4677/EasySeries</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>miniprogram;wechat;tt;douyin;kuaishou;baidu;小程序;微信;抖音;头条;快手;百度</PackageTags>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="Models\Douyin\" />
+    <Folder Include="Models\Kuaishou\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\..\LICENSE" Link="LICENSE">
+      <PackagePath>\</PackagePath>
+      <Pack>True</Pack>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="RestSharp" Version="112.1.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="README.md">
+      <PackagePath>\</PackagePath>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <Pack>True</Pack>
+    </None>
+  </ItemGroup>
+
+</Project>

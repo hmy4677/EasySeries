@@ -13,6 +13,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\EasySeries.FileOpe\EasySeries.FileOpe.csproj" />
+    <ProjectReference Include="..\EasySeries.MiniProgram\EasySeries.MiniProgram.csproj" />
     <ProjectReference Include="..\EasySeries.Pay.Static\EasySeries.Pay.Static.csproj" />
     <ProjectReference Include="..\EasySeries.Pay\EasySeries.Pay.csproj" />
     <ProjectReference Include="..\EasySeries.Post\EasySeries.Post.csproj" />
