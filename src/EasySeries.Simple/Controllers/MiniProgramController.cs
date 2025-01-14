@@ -1,5 +1,6 @@
 ﻿using EasySeries.MiniProgram.Models.Wechat;
 using EasySeries.MiniProgram.Static;
+using EasySeries.MiniProgram.Utils;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EasySeries.Simple.Controllers;
@@ -27,6 +28,7 @@ public class MiniProgramController : ControllerBase
 
     public async Task AllWechatAPIs()
     {
+        //微信.
         await Wechat.GetSessionAsync("code", "appid", "secret");
         await Wechat.GetWechatAccessTokenAsync("appid", "secret");
         await Wechat.GetWechatUserMobileAsync("token", "code");
@@ -34,5 +36,22 @@ public class MiniProgramController : ControllerBase
         await Wechat.GetLimitQrCodeAsync(new WechatLimitQrCodeRequest());
         await Wechat.GetUrlSchemeAsync(new WechatUrlSchemeRequest());
         await Wechat.SendSubscribeMessageAsync(new WechatSendSubMsgRequest());
+
+        //抖音.
+        await Douyin.GetSessionAsync("code", "anonymousCode", "appid", "secret");
+
+        //快手.
+        await Kuaishou.GetSessionAsync("code", "appid", "secret");
+
+
+        //百度.
+        await Baidu.GetSessionAsync("accessToken", "code");
+        await Baidu.GetAccessTokenAsync("appkey", "secret");
+
+        //抖音,快手.
+        MobileData.Decrypt("encryptedData", "sessionkey", "iv");
+
+        //百度.
+        MobileData.DecryptForBaidu("encryptedData", "sessionkey", "iv");
     }
 }

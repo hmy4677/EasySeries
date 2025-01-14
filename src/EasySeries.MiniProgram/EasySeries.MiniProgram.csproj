@@ -18,11 +18,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Models\Douyin\" />
-    <Folder Include="Models\Kuaishou\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <None Include="..\..\LICENSE" Link="LICENSE">
       <PackagePath>\</PackagePath>
       <Pack>True</Pack>

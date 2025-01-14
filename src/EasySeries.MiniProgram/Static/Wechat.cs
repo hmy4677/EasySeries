@@ -1,4 +1,5 @@
 ﻿using EasySeries.MiniProgram.Models.Wechat;
+using EasySeries.MiniProgram.Utils;
 
 namespace EasySeries.MiniProgram.Static;
 
@@ -25,7 +26,7 @@ public class Wechat
             grant_type = "authorization_code"
         };
 
-        var response = await ExecuteRequestAsync<WechatSessionResponse>(API, request);
+        var response = await HttpRequest.ExecutePostAsync<WechatSessionResponse>(API, request);
         if(response.ErrCode != 0)
         {
             throw new Exception(response.ErrMsg);
@@ -43,7 +44,7 @@ public class Wechat
     public static async Task<WechatAccessTokenResponse> GetWechatAccessTokenAsync(string appId, string secret)
     {
         var api = $"https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid={appId}&secret={secret}";
-        var response = await ExecuteRequestAsync<WechatAccessTokenResponse>(api);
+        var response = await HttpRequest.ExecutePostAsync<WechatAccessTokenResponse>(api);
         if(response.ErrCode != 0)
         {
             throw new Exception(response.ErrMsg);
@@ -61,7 +62,7 @@ public class Wechat
     public static async Task<WechatMobileResponse?> GetWechatUserMobileAsync(string accessToken, string code)
     {
         var api = $"https://api.weixin.qq.com/wxa/business/getuserphonenumber?access_token={accessToken}";
-        var response = await ExecuteRequestAsync<WechatMobileResponse>(api, new { code });
+        var response = await HttpRequest.ExecutePostAsync<WechatMobileResponse>(api, new { code });
         if(response.ErrCode != 0)
         {
             throw new Exception(response.ErrMsg);
@@ -162,7 +163,7 @@ public class Wechat
             expire_interval = input.ExpireInterval
         };
 
-        var response = await ExecuteRequestAsync<WechatUrlSchemeResponse>(api, request);
+        var response = await HttpRequest.ExecutePostAsync<WechatUrlSchemeResponse>(api, request);
         if(response.ErrCode != 0)
         {
             throw new Exception(response.ErrMsg);
@@ -190,7 +191,7 @@ public class Wechat
             lang = "zh_CN"
         };
 
-        var response = await ExecuteRequestAsync<WechatSendSubMsgResponse>(api, request);
+        var response = await HttpRequest.ExecutePostAsync<WechatSendSubMsgResponse>(api, request);
 
         if(response.ErrCode != 0)
         {
@@ -198,27 +199,6 @@ public class Wechat
         }
 
         return response;
-    }
-
-    //执行HTTP请求.
-    private static async Task<T> ExecuteRequestAsync<T>(string api, object? requestBody = null)
-    {
-        var client = new RestClient(api);
-        var request = new RestRequest();
-        if(requestBody != null)
-        {
-            request.AddBody(requestBody, ContentType.Json);
-        }
-
-        var response = await client.ExecutePostAsync(request);
-        if(response.IsSuccessful)
-        {
-            return JsonConvert.DeserializeObject<T>(response?.Content ?? "")!;
-        }
-        else
-        {
-            throw new ArgumentException(response.Content);
-        }
     }
 
     //构建消息data.
