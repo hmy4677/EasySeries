@@ -183,7 +183,7 @@ public class Wechat
         var request = new
         {
             page = input.Page,
-            data = input.Data,
+            data = BuildMessageData(input.Keys, input.Values),
             template_id = input.TemplateId,
             touser = input.OpenId,
             miniprogram_state = input.EnvVersion,
@@ -219,5 +219,17 @@ public class Wechat
         {
             throw new ArgumentException(response.Content);
         }
+    }
+
+    //构建消息data.
+    private static Dictionary<string, object> BuildMessageData(string[] keys, string[] values)
+    {
+        var dictionary = new Dictionary<string, object>();
+        for(int i = 0; i < keys.Length; i++)
+        {
+            dictionary.Add(keys[i], new { value = values[i] });
+        }
+
+        return dictionary;
     }
 }

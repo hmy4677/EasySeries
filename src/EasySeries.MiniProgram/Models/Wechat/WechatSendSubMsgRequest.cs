@@ -18,9 +18,14 @@ public class WechatSendSubMsgRequest
     public string OpenId { get; set; }
 
     /// <summary>
-    /// 格式形如 { "key1": { "value": any }, "key2": { "value": any } }的object.
+    /// Key数组与value对应.
     /// </summary>
-    public object Data { get; set; }
+    public string[] Keys { get; set; }
+
+    /// <summary>
+    /// Value数组与key对应.
+    /// </summary>
+    public string[] Values { get; set; }
 
     /// <summary>
     /// 点击模板卡片后的跳转页面，仅限本小程序内的页面。支持带参数,（示例index?foo=bar)
