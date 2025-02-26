@@ -40,10 +40,10 @@ public class PayStaticController : ControllerBase
         var notify = new WechatNotify
         {
             Body = body,
-            IsVerifySign = true,
             Nonce = Request.Headers["Wechatpay-Nonce"]!,
             Signature = Request.Headers["Wechatpay-Signature"]!,
-            Stamp = Request.Headers["Wechatpay-Timestamp"]!
+            Stamp = Request.Headers["Wechatpay-Timestamp"]!,
+            WechatpaySerial = Request.Headers["Wechatpay-Serial"]
         };
 
         try
