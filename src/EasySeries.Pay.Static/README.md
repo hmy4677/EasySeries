@@ -53,7 +53,8 @@ public class PayStaticController : ControllerBase
             IsVerifySign = true,
             Nonce = Request.Headers["Wechatpay-Nonce"]!,
             Signature = Request.Headers["Wechatpay-Signature"]!,
-            Stamp = Request.Headers["Wechatpay-Timestamp"]!
+            Stamp = Request.Headers["Wechatpay-Timestamp"]!,
+            WechatpaySerial = Request.Headers["Wechatpay-Nonce"]
         };
 
         try
@@ -85,9 +86,11 @@ public class PayStaticController : ControllerBase
             MchId = "xxx",
             V3Key = "xxx",
             PrivateKeyPath = "D:\\IIS\\cert\\wechatpay\\wuhou\\apiclient_key.pem",
-            PlatformCertPath = "D:\\IIS\\cert\\wechatpay\\wuhou\\platform_cert.pem",
+            publicCertPath = "D:\\IIS\\cert\\wechatpay\\wuhou\\pub_key.pem",//[荐]微信支付公钥证书路径(二选一),验签用
+            PlatformCertPath = "D:\\IIS\\cert\\wechatpay\\wuhou\\platform_cert.pem",[荐]微信支付平台证书路径(二选一),验签用
             PayNotifyUrl = "https://xxx/api/PayService/wechat_notify_1",
-            RefundNotifyUrl = "https://xxx/api/PayService/wechat_notify_1"
+            RefundNotifyUrl = "https://xxx/api/PayService/wechat_notify_1",
+            IsVerify = true
         };
     }
 

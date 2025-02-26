@@ -15,12 +15,22 @@
     <RepositoryUrl>https://github.com/hmy4677/EasySeries</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>miniprogram;wechat;tt;douyin;kuaishou;baidu;小程序;微信;抖音;头条;快手;百度</PackageTags>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="..\..\LICENSE" Link="LICENSE">
-      <PackagePath>\</PackagePath>
+    <None Include="..\..\LICENSE">
       <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+    <None Include="..\..\README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+    <None Include="C:\Users\He\Desktop\README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
     </None>
   </ItemGroup>
 
@@ -30,9 +40,13 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="LICENSE">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
     <None Update="README.md">
       <PackagePath>\</PackagePath>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
       <Pack>True</Pack>
     </None>
   </ItemGroup>

@@ -1,6 +1,4 @@
-﻿using System.Reflection.PortableExecutable;
-
-namespace EasySeries.Pay.Static.Models.Wechat;
+﻿namespace EasySeries.Pay.Static.Models.Wechat;
 
 /// <summary>
 /// 微信回调通知.
@@ -9,19 +7,19 @@ public class WechatNotify
 {
     /// <summary>
     /// 签名.
-    /// HttpRequest.Headers["Wechatpay-Signature"];
+    /// [Http]Request.Headers["Wechatpay-Signature"];
     /// </summary>
     public string Signature { get; set; } = string.Empty;
 
     /// <summary>
     /// 时间戳.
-    /// HttpRequest.Headers["Wechatpay-Timestamp"];
+    /// [Http]Request.Headers["Wechatpay-Timestamp"];
     /// </summary>
     public string Stamp { get; set; } = string.Empty;
 
     /// <summary>
     /// 随机串.
-    /// HttpRequest.Headers["Wechatpay-Nonce"];
+    /// [Http]Request.Headers["Wechatpay-Nonce"];
     /// </summary>
     public string Nonce { get; set; } = string.Empty;
 
@@ -33,7 +31,8 @@ public class WechatNotify
     public string Body { get; set; } = string.Empty;
 
     /// <summary>
-    /// 是否验签.
+    /// 公钥证书ID.
+    /// [Http]Request.Headers["Wechatpay-Serial"];
     /// </summary>
-    public bool IsVerifySign { get; set; } = true;
+    public string WechatpaySerial { get; set; }
 }

@@ -7,12 +7,6 @@ namespace EasySeries.Pay.Static;
 /// </summary>
 public static class WechatPay
 {
-    //private static string _mchId = string.Empty;
-    //private static string _certSerialNo = string.Empty;
-    //private static string _privateKeyPath = string.Empty;
-    //private static string _platformCertPath = string.Empty;
-    //private static string _v3Key = string.Empty;
-
     /// <summary>
     /// App创建订单.
     /// </summary>
@@ -230,9 +224,9 @@ public static class WechatPay
     //通知验签解密.
     private static T NotifyHandle<T>(WechatPayConfig payConfig, WechatNotify notify)
     {
-        if(notify.IsVerifySign)
+        if(payConfig.IsVerify)
         {
-            var verify = VerifySign(payConfig.PlatformCertPath, notify.Signature, notify.Stamp, notify.Nonce, notify.Body);
+            var verify = VerifySign(payConfig, notify);
             if(!verify)
             {
                 throw new ArgumentException("回调通知处理出错:验签失败");
@@ -306,25 +300,46 @@ public static class WechatPay
     }
 
     //验签.
-    private static bool VerifySign(string platformCertPath, string signature, string stamp, string nonce, string? body)
+    public static bool VerifySign(WechatPayConfig payConfig, WechatNotify notify)
     {
-        if(!File.Exists(platformCertPath))
+        var textBuffer = Encoding.UTF8.GetBytes($"{notify.Stamp}\n{notify.Nonce}\n{notify.Body}\n");
+        var signatureBuffer = Convert.FromBase64String(notify.Signature);
+
+        if(payConfig.PublicCertId == notify.WechatpaySerial)
         {
-            throw new FileNotFoundException("微信支付平台公钥证书不存在");
+            if(string.IsNullOrEmpty(payConfig.PublicCertPath))
+            {
+                throw new ArgumentNullException("未配置微信支付公钥证书路径");
+            }
+
+            if(!File.Exists(payConfig.PublicCertPath))
+            {
+                throw new FileNotFoundException("未找到微信支付公钥证书");
+            }
+
+            using var rsa = RSA.Create();
+            var keyText = File.ReadAllText(payConfig.PublicCertPath);
+            rsa.ImportFromPem(keyText);
+
+            return rsa.VerifyData(textBuffer, signatureBuffer, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1);
         }
+        else
+        {
+            if(string.IsNullOrEmpty(payConfig.PlatformCertPath))
+            {
+                throw new ArgumentNullException("未配置微信支付平台证书路径");
+            }
 
-        //var cert = new X509Certificate(_platformCertPath);
-        //var publicKey = cert.GetPublicKey();
+            if(!File.Exists(payConfig.PlatformCertPath))
+            {
+                throw new FileNotFoundException("未找到微信支付平台证书");
+            }
 
-        //using var rsa = RSA.Create();
-        //rsa.ImportRSAPublicKey(publicKey, out _);
+            using var cert = new X509Certificate2(payConfig.PlatformCertPath);
+            using var rsa = cert.GetRSAPublicKey();
 
-        using var cert = new X509Certificate2(platformCertPath);
-        using var rsa = cert.GetRSAPublicKey();
-
-        var textBuffer = Encoding.UTF8.GetBytes($"{stamp}\n{nonce}\n{body}\n");
-        var signatureBuffer = Convert.FromBase64String(signature);
-        return rsa!.VerifyData(textBuffer, signatureBuffer, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1);
+            return rsa!.VerifyData(textBuffer, signatureBuffer, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1);
+        }
     }
 
     //解密.

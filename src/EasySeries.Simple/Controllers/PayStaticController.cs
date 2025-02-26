@@ -77,7 +77,8 @@ public class PayStaticController : ControllerBase
             PrivateKeyPath = "D:\\IIS\\cert\\wechatpay\\wuhou\\apiclient_key.pem",
             PlatformCertPath = "D:\\IIS\\cert\\wechatpay\\wuhou\\platform_cert.pem",
             PayNotifyUrl = "https://xxx/api/PayService/wechat_notify_1",
-            RefundNotifyUrl = "https://xxx/api/PayService/wechat_notify_1"
+            RefundNotifyUrl = "https://xxx/api/PayService/wechat_notify_1",
+            IsVerify = true
         };
     }
 
