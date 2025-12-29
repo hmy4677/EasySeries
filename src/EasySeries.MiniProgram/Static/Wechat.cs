@@ -18,15 +18,15 @@ public class Wechat
     public static async Task<WechatSessionResponse> GetSessionAsync(string code, string appId, string secret)
     {
         const string API = "https://api.weixin.qq.com/sns/jscode2session";
-        var request = new
+        var query = new Dictionary<string, string>
         {
-            appid = appId,
-            secret,
-            js_code = code,
-            grant_type = "authorization_code"
+            { "appid" , appId },
+            { "secret",secret },
+            { "js_code", code },
+            { "grant_type", "authorization_code" }
         };
 
-        var response = await HttpRequest.ExecutePostAsync<WechatSessionResponse>(API, request);
+        var response = await HttpRequest.ExecuteGetAsync<WechatSessionResponse>(API, null, query);
         if(response.ErrCode != 0)
         {
             throw new Exception(response.ErrMsg);
@@ -44,7 +44,7 @@ public class Wechat
     public static async Task<WechatAccessTokenResponse> GetWechatAccessTokenAsync(string appId, string secret)
     {
         var api = $"https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid={appId}&secret={secret}";
-        var response = await HttpRequest.ExecutePostAsync<WechatAccessTokenResponse>(api);
+        var response = await HttpRequest.ExecuteGetAsync<WechatAccessTokenResponse>(api, null, null);
         if(response.ErrCode != 0)
         {
             throw new Exception(response.ErrMsg);

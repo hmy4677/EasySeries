@@ -16,6 +16,7 @@
     <Authors>何明钰(hmy4677)</Authors>
     <PackageTags>pay;payment;wechatPay;aliPay;CiticBank;UnifyTrade;微信支付;支付宝支付;中信全付通;微信;支付宝;中信银行;全付通</PackageTags>
     <PlatformTarget>AnyCPU</PlatformTarget>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">

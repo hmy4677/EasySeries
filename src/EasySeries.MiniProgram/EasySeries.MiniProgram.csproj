@@ -4,7 +4,7 @@
     <TargetFrameworks>net6.0;net8.0</TargetFrameworks>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <Version>3.3.0</Version>
+    <Version>3.3.1</Version>
     <Title>EasySeries.MiniProgram</Title>
     <Authors>何明钰(hmy4677)</Authors>
     <Product>Easy系列-小程序</Product>
